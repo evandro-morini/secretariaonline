@@ -3,7 +3,7 @@ return array(
     'home' => array(
         'type' => 'Literal',
         'options' => array(
-            'route' => '/home',
+            'route' => '/',
             'defaults' => array(
                 '__NAMESPACE__' => 'Secretaria\Controller',
                 'controller' => 'Home',
