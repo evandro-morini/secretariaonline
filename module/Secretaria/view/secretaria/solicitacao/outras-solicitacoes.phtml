@@ -55,8 +55,7 @@
                                 <li class="divider"></li>
 
                                 <li>
-                                    <a href="<?php  echo $this->url('logout');?>">
-                                    <i class="fa fa-ban fa-fw pull-right"></i>Sair</a>
+                                    <a href="#"><i class="fa fa-ban fa-fw pull-right"></i>Sair</a>
                                 </li>
                             </ul>
                         </li>
@@ -102,10 +101,66 @@
             <aside class="right-side">
                 <section class="content">
                     <div class="row">
-                        <?php echo $this->content; ?>
+                        <div class="col-lg-9">
+                            <section class="panel">
+                                <header class="panel-heading">
+                                    Requerimento para Outras Solicitações
+                                </header>
+                                <div class="panel-body">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="form-group">
+                                            <label  class="col-lg-2 col-sm-2 control-label">Nome</label>
+                                            <div class="col-lg-10">
+                                                <input type="text" class="form-control" value="Evandro Morini Silva" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="col-lg-2 col-sm-2 control-label">Matrícula</label>
+                                            <div class="col-lg-10">
+                                                <input type="text" class="form-control" value="GRR20121401" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="col-lg-2 col-sm-2 control-label">Curso</label>
+                                            <div class="col-lg-10">
+                                                <input type="text" class="form-control" value="TADS - NOITE" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="col-lg-2 col-sm-2 control-label">Requer</label>
+                                            <div class="col-lg-10">
+                                                <textarea class="form-control" rows="5" placeholder="Digite aqui sua solicitação..." required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-lg-offset-2 col-lg-10">
+                                                <button type="submit" class="btn btn-info">Enviar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </section>
+                        </div>
                     </div>
                 </section>
             </aside>
+        </div>
+
+        <div id="novaSolicitacao" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Escolha o tipo de Serviço: </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Opções...</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

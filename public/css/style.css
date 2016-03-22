@@ -17,7 +17,8 @@ body {
   font-family: 'Lato', sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
-  background: #f1f2f7;
+  background: url("../img/bg-body.jpg") top right;
+  background-attachment: fixed;
 }
 a {
   color: #3c8dbc;
@@ -112,7 +113,8 @@ body.fixed .wrapper {
 /* Content */
 .content {
   padding: 20px 15px;
-  background: #f0f3f4;
+  background: url("../img/bg-body.jpg") top right;
+  background-attachment: fixed;
   overflow: auto;
 }
 /* Utility */

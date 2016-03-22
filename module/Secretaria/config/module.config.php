@@ -13,7 +13,8 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Secretaria\Controller\Home' => Controller\HomeController::class
+            'Secretaria\Controller\Home' => Controller\HomeController::class,
+            'Secretaria\Controller\Autenticacao' => Controller\AutenticacaoController::class
         )
     ),
     'view_manager' => array(
