@@ -1,14 +1,16 @@
 <?php
+
 namespace Secretaria\Form\Filter;
+
 use Zend\InputFilter\InputFilter;
- 
+
 class LoginFilter extends InputFilter {
- 
-    public function __construct(){
-        
+
+    public function __construct() {
+
         $isEmpty = \Zend\Validator\NotEmpty::IS_EMPTY;
         $invalidEmail = \Zend\Validator\EmailAddress::INVALID_FORMAT;
-        
+
         $this->add(array(
             'name' => 'login',
             'required' => true,
@@ -36,7 +38,7 @@ class LoginFilter extends InputFilter {
                 )
             ),
         ));
-        
+
         $this->add(array(
             'name' => 'password',
             'required' => true,
@@ -56,4 +58,5 @@ class LoginFilter extends InputFilter {
             )
         ));
     }
+
 }

@@ -13,7 +13,8 @@ class Usuario extends AbstractEntity
     protected $pwd;
     protected $fkPerfil;
     protected $adm;
-    
+    protected $status;
+
     function getId() {
         return $this->id;
     }
@@ -48,6 +49,10 @@ class Usuario extends AbstractEntity
 
     function getAdm() {
         return $this->adm;
+    }
+    
+    function getStatus() {
+        return $this->status;
     }
 
     function setId($id) {
@@ -84,5 +89,9 @@ class Usuario extends AbstractEntity
 
     function setAdm($adm) {
         $this->adm = $adm;
+    }
+    
+    function setStatus($status) {
+        $this->status = $status;
     }
 }

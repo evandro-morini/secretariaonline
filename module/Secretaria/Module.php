@@ -12,7 +12,9 @@ use Zend\Authentication\AuthenticationService;
 class Module {
 
     protected $whitelist = array(
-        'autenticacao'
+        'autenticacao',
+        'home/novo-usuario',
+        'home/ativar-cadastro'
     );
 
     public function onBootstrap(MvcEvent $e) {

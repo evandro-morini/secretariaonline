@@ -11,6 +11,27 @@ return array(
             )
         ),
         'may_terminate' => true,
+        'child_routes' => array(
+            'novo-usuario' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => 'novo-usuario',
+                    'defaults' => array(
+                        'action' => 'novoUsuario'
+                    )
+                )
+            ),
+            'ativar-cadastro' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => 'ativar-cadastro[/:cpf]',
+                    'defaults' => array(
+                        'action' => 'ativarCadastro',
+                        'cpf' => 0
+                    )
+                )
+            ),
+        )
     ),
     'autenticacao' => array(
         'type' => 'Literal',
