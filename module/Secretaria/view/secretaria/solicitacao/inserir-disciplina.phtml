@@ -1,0 +1,36 @@
+<?php if($this->tipo > 0) : ?>
+    <div class="form-group disciplina<?php echo $this->count; ?>">
+        <label  class="col-lg-2 col-sm-2 control-label">
+            Disciplina <?php echo $this->count; ?>
+        </label>
+        <div class="col-lg-2">
+            <select class="form-control tipo" name="tipo<?php echo $this->count; ?>" required>
+                <option value="">Selecione o Tipo</option>
+                <option value="2">Incluir</option>
+                <option value="3">Excluir</option>
+            </select>
+        </div>    
+        <div class="col-lg-8">
+            <select class="form-control disciplina" name="disciplina<?php echo $this->count; ?>" required>
+                <option value="">Selecione a disciplina</option>
+                <?php foreach($this->disciplinas as $disciplina) : ?>
+                <option value="<?php echo $disciplina->getId(); ?>"><?php echo $disciplina->getCod() . ' - ' . $disciplina->getDescricao(); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+<?php else : ?>
+    <div class="form-group disciplina<?php echo $this->count; ?>">
+        <label  class="col-lg-2 col-sm-2 control-label">
+            Disciplina <?php echo $this->count; ?>
+        </label>
+        <div class="col-lg-10">
+            <select class="form-control disciplina" name="disciplina<?php echo $this->count; ?>" required>
+                <option value="">Selecione a disciplina</option>
+                <?php foreach($this->disciplinas as $disciplina) : ?>
+                <option value="<?php echo $disciplina->getId(); ?>"><?php echo $disciplina->getCod() . ' - ' . $disciplina->getDescricao(); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+<?php endif; ?>

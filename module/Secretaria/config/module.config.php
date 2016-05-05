@@ -15,6 +15,7 @@ return array(
         'invokables' => array(
             'Secretaria\Controller\Home' => Controller\HomeController::class,
             'Secretaria\Controller\Autenticacao' => Controller\AutenticacaoController::class,
+            'Secretaria\Controller\Solicitacao' => Controller\SolicitacaoController::class,
             'Secretaria\Controller\Crypto' => Controller\CryptoController::class
         )
     ),

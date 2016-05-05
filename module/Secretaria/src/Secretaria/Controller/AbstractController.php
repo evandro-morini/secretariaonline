@@ -22,8 +22,12 @@ class AbstractController extends \Zend\Mvc\Controller\AbstractActionController
         } else {
             $formatData = explode(" ", $datetime);
             $dmy = explode("-", $formatData[0]);
-            $hms = explode(":", $formatData[1]);
-            $datetime = $dmy[2] . "/" . $dmy[1] . "/" . $dmy[0] . ' ' . $hms[0] . ':' . $hms[1];
+            if(count($formatData) > 1) {
+                $hms = explode(":", $formatData[1]);
+                $datetime = $dmy[2] . "/" . $dmy[1] . "/" . $dmy[0] . ' ' . $hms[0] . ':' . $hms[1];
+            } else {
+                $datetime = $dmy[2] . "/" . $dmy[1] . "/" . $dmy[0];
+            }
             return $datetime;
         }
     }

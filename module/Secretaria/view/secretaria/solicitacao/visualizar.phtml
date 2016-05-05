@@ -1,0 +1,71 @@
+<div class="col-lg-10">
+    <section class="panel">
+        <header class="panel-heading text-center">
+            Protocolo <?php echo $this->protocolo; ?>
+        </header>
+        <div class="panel-body">
+            <div class="clearfix">
+                <div class="pull-left">
+                    <p class="text"><strong>Tipo de solicitação: </strong><?php echo $this->solicitacoes['tipo']; ?></p>
+                    <p class="text"><strong>Nome: </strong><?php echo $this->solicitacoes['nome']; ?></p>
+                    <p class="text"><strong>Curso: </strong><?php echo $this->solicitacoes['nome_curso']; ?></p>
+                    <p class="text"><strong>Matrícula: </strong><?php echo $this->solicitacoes['matricula']; ?></p>
+                </div>
+                <div class="pull-right">
+                    <p class="text"><strong>Data de abertura: </strong><?php echo $this->solicitacoes['data_exibir']; ?></p>
+                    <p class="text"><strong>Data de fechamento: </strong>
+                        <?php
+                        if (!is_null($this->solicitacoes['dta_fechamento'])) {
+                            echo $this->solicitacoes['dta_fechamento'];
+                        } else {
+                            echo 'Não informada';
+                        }
+                        ?>
+                    </p>
+                    <p class="text"><strong>Status da Solicitação: </strong> 
+                        <?php
+                        switch ((int) $this->solicitacoes['fk_status']) {
+                            case 1:
+                                echo "<span class='label label-primary'>Aberto</span>";
+                                break;
+                            case 2:
+                                echo "<span class='label label-warning'>Em atendimento</span>";
+                                break;
+                            case 3:
+                                echo "<span class='label label-danger'>Encaminhado</span>";
+                                break;
+                            case 4:
+                                echo "<span class='label label-success'>Encerrado</span>";
+                                break;
+                        }
+                        ?> 
+                    </p>
+                </div>
+            </div>
+            <?php if($this->disciplinas->count()) : ?>
+                <br><p class="text"><strong>Disciplinas</strong></p>
+                <?php foreach($this->disciplinas as $disciplina) : ?>
+                <p class="text">
+                    &bull; 
+                    <?php if($disciplina['tipo_id'] == 2) : ?>
+                        <span class="label label-success">Incluir</span> 
+                    <?php elseif($disciplina['tipo_id'] == 3) : ?>
+                        <span class="label label-danger">Excluir</span> 
+                    <?php endif; ?>
+                    <?php echo $disciplina['nome_disciplina']; ?>
+                </p>
+                <?php endforeach; ?>
+            <?php endif; ?>
+                
+            <?php if(!is_null($this->solicitacoes['observacao'])) : ?>
+                <p class="text"><strong>Observação: </strong><?php echo $this->solicitacoes['observacao']; ?></p>
+            <?php endif; ?>
+                
+            <?php if(!is_null($this->solicitacoes['arquivo'])) : ?>
+                <p class="text"><strong>Anexo: </strong>
+                    <a href="<?php echo $this->basePath('uploads/'.$this->solicitacoes['arquivo']);?>" target="_blank"><?php echo $this->solicitacoes['arquivo']; ?></a>
+                </p>
+            <?php endif; ?>
+        </div>
+    </section>
+</div>

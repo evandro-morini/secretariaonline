@@ -36,6 +36,23 @@ class UsuarioModel extends AbstractModel {
         return $entity;
     }
     
+    public function findById($id) {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $select->where->equalTo('id', $id);
+        $select->where->equalTo('status', 1);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute();
+
+        $entity = false;
+        if ($resultSet->count()) {
+            $entity = new \Secretaria\Model\Entity\Usuario($resultSet->current());
+        }
+
+        return $entity;
+    }
+    
     public function insertUser(\Secretaria\Model\Entity\Usuario $user)
     {
         $sql = new \Zend\Db\Sql\Sql($this->adapter);
@@ -95,6 +112,51 @@ class UsuarioModel extends AbstractModel {
         $resultSet = $statement->execute()->current();
 
         return $resultSet['matricula'];
+    }
+    
+    public function getSubject($idUsuario)
+    {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier('tb_usuario_curso', $this->getSchema()));
+        $select->join(array('curso' => new \Zend\Db\Sql\TableIdentifier('tb_curso', $this->getSchema())), 'tb_usuario_curso.fk_curso = curso.id');
+        $select->where->equalTo('tb_usuario_curso.fk_usuario', $idUsuario);
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute()->current();
+        return $resultSet;
+    }
+    
+    public function updateUser($idUser, \Secretaria\Model\Entity\Usuario $user)
+    {
+        $data = array(
+            'cpf'       => $user->getCpf(),
+            'nome'      => $user->getNome(),
+            'dta_nasc'  => $user->getDtaNasc(),
+            'email'     => $user->getEmail(),
+            'pwd'       => $user->getPwd(),
+            'fk_perfil' => $user->getFkPerfil(),
+            'adm'       => 0, //0 = não administrador
+            'status'    => $user->getStatus()
+        );
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $update = $sql->update(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $update->set($data);
+        $update->where('id = '. $idUser);
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $resultSet = $statement->execute();
+    }
+    
+    public function updateEnrollment($idUsuario, $idCurso, $matricula)
+    {
+        $data = array(
+            'fk_curso'   => $idCurso,
+            'matricula'  => $matricula
+        );
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $update = $sql->update(new \Zend\Db\Sql\TableIdentifier('tb_usuario_curso', $this->getSchema()));
+        $update->set($data);
+        $update->where('fk_usuario = '. $idUsuario);
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $resultSet = $statement->execute();
     }
 
 }

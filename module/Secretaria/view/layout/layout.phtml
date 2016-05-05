@@ -13,6 +13,7 @@
         <script src="<?php echo $this->basePath('js/bootstrap.min.js');?>" type="text/javascript"></script>
         <script src="<?php echo $this->basePath('js/Director/app.js');?>" type="text/javascript"></script>
         <script src="<?php echo $this->basePath('js/plugins/input-mask/jquery.inputmask.js');?>"></script>
+        <script src="<?php echo $this->basePath('js/secretaria/secretaria.js');?>" type="text/javascript"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $(function () {
@@ -23,7 +24,7 @@
     </head>
     <body class="skin-black">
         <header class="header">
-            <a href="#" class="logo">Secretaria Online</a>
+            <a href="<?php echo $this->url('home');?>" class="logo">Secretaria Online</a>
             <nav class="navbar navbar-static-top" role="navigation">
                 <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
                     <span class="sr-only">Toggle navigation</span>
@@ -41,7 +42,7 @@
                             <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
                                 <li class="dropdown-header text-center">OPÇÕES</li>
                                 <li>
-                                    <a href="#">
+                                    <a href="<?php  echo $this->url('solicitacao/minhas-solicitacoes');?>">
                                         <i class="fa fa-envelope-o fa-fw pull-right"></i>
                                         <!--<span class="badge badge-danger pull-right">5</span> -->
                                         Minhas Solicitações</a>
@@ -50,7 +51,7 @@
                                 <li class="divider"></li>
 
                                 <li>
-                                    <a href="#">
+                                    <a href="<?php  echo $this->url('home/editar-usuario');?>">
                                         <i class="fa fa-user fa-fw pull-right"></i>
                                         Meus dados
                                     </a>
@@ -73,7 +74,7 @@
                 <section class="sidebar">
                     <div class="user-panel">
                         <div class="pull-left image">
-                            <img src="img/avatarufpr.png" class="img-circle" alt="User Image" />
+                            <img src="<?php echo $this->basePath('img/avatarufpr.png');?>" class="img-circle" alt="User Image" />
                         </div>
                         <div class="pull-left info">
                             <p> 
@@ -85,9 +86,9 @@
                             <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                         </div>
                     </div>
-                    <form action="#" method="get" class="sidebar-form">
+                    <form action="<?php  echo $this->url('solicitacao/pesquisar-protocolo');?>" method="post" class="sidebar-form">
                         <div class="input-group">
-                            <input type="text" name="q" class="form-control" placeholder="Pesquisar..."/>
+                            <input type="text" name="protocolo" class="form-control" placeholder="Pesquisar protocolo"/>
                             <span class="input-group-btn">
                                 <button type='submit' name='seach' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
                             </span>
@@ -100,7 +101,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="<?php  echo $this->url('solicitacao/minhas-solicitacoes');?>">
                                 <i class="fa fa-user"></i> <span>Minhas Solicitações</span>
                             </a>
                         </li>
@@ -122,13 +123,35 @@
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Header</h4>
+                <h4 class="modal-title">Nova Solicitação</h4>
               </div>
               <div class="modal-body">
-                <p>Some text in the modal.</p>
+                <p>Selecione o tipo de atendimento abaixo:</p>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a href="<?php  echo $this->url('solicitacao/adiantamento-disciplina');?>">Adiantamento de disciplina</a>
+                        <p>Solicitar exame para adiantar uma ou mais disciplinas</p>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="<?php  echo $this->url('solicitacao/aproveitamento-conhecimento');?>">Aproveitamento de conhecimento</a>
+                        <p>Eliminar disciplinas das quais o aluno já possui o conhecimento</p>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="<?php  echo $this->url('solicitacao/cancelamento-matricula');?>">Cancelamento de matrícula</a>
+                        <p>Cancelar uma matrícula realizada em uma ou mais disciplinas</p>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="<?php  echo $this->url('solicitacao/correcao-matricula');?>">Correção de matrícula</a>
+                        <p>Incluir ou excluir disciplinas que serão cursadas no semestre atual</p>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="<?php  echo $this->url('solicitacao/outras-solicitacoes');?>">Outras Solicitações</a>
+                        <p>Demais solicitações não contempladas nos itens anteriores</p>
+                    </li>
+                </ul>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
               </div>
             </div>
           </div>

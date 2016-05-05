@@ -57,7 +57,8 @@ class AlunoForm extends Form {
             ),
             'attributes' => array(
                 'class' => 'form-control',
-                'id' => 'curso'
+                'id' => 'curso',
+                'required' => true,
             )
         ));
         

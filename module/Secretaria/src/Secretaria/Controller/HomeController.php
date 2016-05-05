@@ -5,11 +5,11 @@ namespace Secretaria\Controller;
 use Secretaria\Form\AlunoForm;
 use Secretaria\Form\Filter\AlunoFilter;
 use Secretaria\Model\Entity\Usuario;
-use Secretaria\Model\Entity\Curso;
 use Secretaria\Model\UsuarioModel;
 use Secretaria\Model\CursoModel;
 use Secretaria\Controller\CryptoController;
 use Zend\View\Model\ViewModel;
+use Zend\Authentication\AuthenticationService;
 
 class HomeController extends AbstractController {
 
@@ -24,7 +24,7 @@ class HomeController extends AbstractController {
         //formulario novo aluno
         $alunoForm = new AlunoForm($listaCursos);
         $alunoForm->setInputFilter(new AlunoFilter());
-        
+
         //requisição via post
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -34,24 +34,24 @@ class HomeController extends AbstractController {
             if ($alunoForm->isValid()) {
                 //BUSCA DA MATRICULA DO ALUNO NO ARQUIVO CSV
                 $grantedFile = $_SERVER['DOCUMENT_ROOT'] . 'secretariaonline/public/csv/granted.csv';
-                try{
+                try {
                     $csvContent = file_get_contents($grantedFile);
                     $csvRows = explode("\n", $csvContent);
                     $valid = false;
                     foreach ($csvRows as $userData) {
-                        if(strpos($userData, $data['matricula']) !== false){
+                        if (strpos($userData, $data['matricula']) !== false) {
                             //aluno validado
                             $valid = true;
-                        } 
+                        }
                     }
-                    if($valid === false) {
+                    if ($valid === false) {
                         $this->flashMessenger()->addErrorMessage('Sua matrícula não foi encontrada em nosso banco de dados. Informe a secretaria do seu curso.');
                         $this->redirect()->refresh();
                     } else {
                         //FORMULÁRIO VALIDADO E GRR VALIDADO -> SALVAR DADOS
                         $crypto = new CryptoController();
                         $cryptoPwd = $crypto->criarAction($data['password']);
-                        
+
                         $newUser = new Usuario();
                         $newUser->setCpf($data['cpf']);
                         $newUser->setNome($data['nome']);
@@ -60,32 +60,32 @@ class HomeController extends AbstractController {
                         $newUser->setFkPerfil(1); //fk do perfil de aluno
                         $newUser->setStatus(0); //só será ativo após confirmação via email
                         //validação da data
-                        if(!empty($data['dta_nasc']) && strpos($data['dta_nasc'], '_') === false) {
+                        if (!empty($data['dta_nasc']) && strpos($data['dta_nasc'], '_') === false) {
                             $newUser->setDtaNasc($this->formatDateTimeBr($data['dta_nasc']));
                         }
                         $usuarioModel = new UsuarioModel($this->getDbAdapter());
                         $idUsuario = $usuarioModel->insertUser($newUser);
                         $idMatriculado = $usuarioModel->insertEnrollment($idUsuario, $data['curso'], $data['matricula']);
-                        
-                        if($idMatriculado) {
+
+                        if ($idMatriculado) {
                             $bodyPart = new \Zend\Mime\Message();
                             $bodyMessage = new \Zend\Mime\Part('Olá ' . $newUser->getNome() . ', seja bem vindo a Secretaria Online UFPR, por favor, <a href="http://localhost/secretariaonline/public/ativar-cadastro/' . $newUser->getCpf() . '">clique aqui</a> para ativar seu cadastro.');
                             $bodyMessage->type = 'text/html';
                             $bodyPart->setParts(array($bodyMessage));
                             $message = new \Zend\Mail\Message();
                             $message->addTo($newUser->getEmail(), $newUser->getNome())
-                                ->addFrom('secretaria.online.ufpr@gmail.com', 'Secretaria Online')
-                                ->setSubject('Ativação de cadastro')
-                                ->setBody($bodyPart)
-                                ->setEncoding('UTF-8');
-                            
+                                    ->addFrom('secretaria.online.ufpr@gmail.com', 'Secretaria Online')
+                                    ->setSubject('Ativação de cadastro')
+                                    ->setBody($bodyPart)
+                                    ->setEncoding('UTF-8');
+
                             $smtpOptions = new \Zend\Mail\Transport\SmtpOptions(array(
                                 "name" => "gmail",
                                 "host" => "smtp.gmail.com",
                                 "port" => 587,
                                 "connection_class" => "plain",
-                                "connection_config" => array( "username" => "secretaria.online.ufpr@gmail.com",
-                                "password" => "ufpr2016","ssl" => "tls" )
+                                "connection_config" => array("username" => "secretaria.online.ufpr@gmail.com",
+                                    "password" => "ufpr2016", "ssl" => "tls")
                             ));
 
                             $transport = new \Zend\Mail\Transport\Smtp($smtpOptions);
@@ -101,21 +101,79 @@ class HomeController extends AbstractController {
             } else {
                 $this->flashMessenger()->addErrorMessage($alunoForm->getMessages());
                 $this->redirect()->refresh();
-            }  
+            }
         }
-        
+
         $this->layout()->setTemplate('layout/layout-no-session');
         return new ViewModel(array(
             'form' => $alunoForm
         ));
     }
-    
+
     public function ativarCadastroAction() {
         $cpf = $this->params()->fromRoute('cpf');
         $usuarioModel = new UsuarioModel($this->getDbAdapter());
         $usuarioModel->activateUser($cpf);
         $this->layout()->setTemplate('layout/layout-no-session');
         return new ViewModel();
+    }
+
+    public function editarUsuarioAction() {
+        //dados da sessão
+        $auth = new AuthenticationService();
+        $usuarioSessao = $auth->getIdentity();
+        $usuarioModel = new UsuarioModel($this->getDbAdapter());
+        $usuario = $usuarioModel->findById($usuarioSessao->pkUsuario);
+        $matricula = $usuarioModel->getEnrollment($usuarioSessao->pkUsuario);
+        $usuario->setDtaNasc($this->formatDateTime($usuario->getDtaNasc()));
+        
+        //preenchendo select de cursos
+        $cursoModel = new CursoModel($this->getDbAdapter());
+        $listaCursos = $cursoModel->findCursos();
+        //formulario novo aluno
+        $alunoForm = new AlunoForm($listaCursos);
+        $alunoForm->setInputFilter(new AlunoFilter());
+
+        //requisição via post
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $alunoForm->setData($data);
+
+            if ($alunoForm->isValid()) {
+                //FORMULÁRIO VALIDADO E GRR VALIDADO -> SALVAR DADOS
+                $crypto = new CryptoController();
+                $cryptoPwd = $crypto->criarAction($data['password']);
+
+                $newUser = new Usuario();
+                $newUser->setCpf($data['cpf']);
+                $newUser->setNome($data['nome']);
+                $newUser->setEmail($data['email']);
+                $newUser->setPwd($cryptoPwd);
+                $newUser->setFkPerfil(1); //fk do perfil de aluno
+                $newUser->setStatus(1);
+                //validação da data
+                if (!empty($data['dta_nasc']) && strpos($data['dta_nasc'], '_') === false) {
+                    $newUser->setDtaNasc($this->formatDateTimeBr($data['dta_nasc']));
+                }
+                $usuarioModel = new UsuarioModel($this->getDbAdapter());
+                $usuarioModel->updateUser($usuarioSessao->pkUsuario, $newUser);
+                $usuarioModel->updateEnrollment($usuarioSessao->pkUsuario, $data['curso'], $data['matricula']);
+                
+                $this->flashMessenger()->addSuccessMessage("Dados atualizados com sucesso!");
+                $this->redirect()->refresh();
+
+            } else {
+                $this->flashMessenger()->addErrorMessage($alunoForm->getMessages());
+                $this->redirect()->refresh();
+            }
+        }
+
+        return new ViewModel(array(
+            'form' => $alunoForm,
+            'usuario' => $usuario,
+            'matricula' => $matricula
+        ));
     }
 
 }
