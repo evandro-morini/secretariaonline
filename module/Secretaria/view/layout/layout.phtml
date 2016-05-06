@@ -41,21 +41,30 @@
                             </a>
                             <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
                                 <li class="dropdown-header text-center">OPÇÕES</li>
-                                <li>
-                                    <a href="<?php  echo $this->url('solicitacao/minhas-solicitacoes');?>">
-                                        <i class="fa fa-envelope-o fa-fw pull-right"></i>
-                                        <!--<span class="badge badge-danger pull-right">5</span> -->
-                                        Minhas Solicitações</a>
-                                </li>
+                                <?php if($this->perfil == 1) : ?>
+                                    <li>
+                                        <a href="<?php  echo $this->url('solicitacao/minhas-solicitacoes');?>">
+                                            <i class="fa fa-envelope-o fa-fw pull-right"></i>
+                                            <!--<span class="badge badge-danger pull-right">5</span> -->
+                                            Minhas Solicitações</a>
+                                    </li>
 
-                                <li class="divider"></li>
-
-                                <li>
-                                    <a href="<?php  echo $this->url('home/editar-usuario');?>">
-                                        <i class="fa fa-user fa-fw pull-right"></i>
-                                        Meus dados
-                                    </a>
-                                </li>
+                                    <li class="divider"></li>
+                                    
+                                    <li>
+                                        <a href="<?php  echo $this->url('home/editar-usuario');?>">
+                                            <i class="fa fa-user fa-fw pull-right"></i>
+                                            Meus dados
+                                        </a>
+                                    </li>
+                                <?php else : ?>
+                                    <li>
+                                        <a href="<?php  echo $this->url('tarefas');?>">
+                                            <i class="fa fa-envelope-o fa-fw pull-right"></i>
+                                            <!--<span class="badge badge-danger pull-right">5</span> -->
+                                            Tarefas</a>
+                                    </li>
+                                <?php endif; ?>
 
                                 <li class="divider"></li>
 
@@ -89,23 +98,38 @@
                     <form action="<?php  echo $this->url('solicitacao/pesquisar-protocolo');?>" method="post" class="sidebar-form">
                         <div class="input-group">
                             <input type="text" name="protocolo" class="form-control" placeholder="Pesquisar protocolo"/>
+                            <input type="hidden" name="perfil" value="<?php echo $this->perfil; ?>">
                             <span class="input-group-btn">
                                 <button type='submit' name='seach' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
                             </span>
                         </div>
                     </form>
                     <ul class="sidebar-menu">
-                        <li>
-                            <a href="#" data-toggle="modal" data-target="#novaSolicitacao">
-                                <i class="fa fa-envelope-o"></i> <span>Nova Solicitação</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?php  echo $this->url('solicitacao/minhas-solicitacoes');?>">
-                                <i class="fa fa-user"></i> <span>Minhas Solicitações</span>
-                            </a>
-                        </li>
-
+                        <?php if($this->perfil == 1) : ?>
+                            <li>
+                                <a href="#" data-toggle="modal" data-target="#novaSolicitacao">
+                                    <i class="fa fa-envelope-o"></i> <span>Nova Solicitação</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<?php echo $this->url('solicitacao/minhas-solicitacoes');?>">
+                                    <i class="fa fa-user"></i> <span>Minhas Solicitações</span>
+                                </a>
+                            </li>
+                        <?php else : ?>
+                            <li>
+                                <a href="<?php echo $this->url('tarefas');?>">
+                                    <i class="fa fa-envelope-o"></i> <span>Tarefas</span>
+                                </a>
+                            </li>
+                            <?php if($this->isAdmin == 1) : ?>
+                                <li>
+                                <a href="#">
+                                    <i class="fa fa-user"></i> <span>Administração</span>
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </ul>
                 </section>
             </aside>

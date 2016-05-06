@@ -26,5 +26,9 @@ function excluirDisciplina() {
 }
 
 function visualizarSolicitacao(protocolo) {
-        window.location = '../solicitacao/visualizar/' + protocolo;
+        window.location.href = '../solicitacao/visualizar/' + protocolo;
+}
+
+function visualizarTarefa(protocolo) {
+        window.location.href = '../public/solicitacao/visualizar/' + protocolo;
 }

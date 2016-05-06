@@ -48,7 +48,11 @@ class AutenticacaoController extends AbstractController {
                             
                             // Grava sessão do usuário
                             $auth->getStorage()->write($objUsuario);
-                            return $this->redirect()->toRoute('home');
+                            if((int)$usuario->getFkPerfil() == 1) {
+                                return $this->redirect()->toRoute('solicitacao/minhas-solicitacoes');
+                            } else {
+                                return $this->redirect()->toRoute('tarefas');
+                            }
                         } else {
                             $auth->clearIdentity();
                             $this->flashMessenger()->addErrorMessage('Login inválido ou sem permissão para o acesso. Favor, verificar!');

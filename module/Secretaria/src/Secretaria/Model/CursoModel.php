@@ -37,4 +37,14 @@ class CursoModel extends AbstractModel {
         return $entities;
     }
     
+    public function findPerfilCurso($perfil) {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier('tb_perfil', $this->getSchema()));
+        $select->columns(array('fk_curso'));
+        $select->where('id = '. $perfil);
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute()->current();
+        return $resultSet['fk_curso'];
+    }
+    
 }

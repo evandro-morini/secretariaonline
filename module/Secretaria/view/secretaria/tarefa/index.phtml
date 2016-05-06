@@ -1,0 +1,130 @@
+<div class="col-lg-10">
+    <section class="panel general">
+        <header class="panel-heading tab-bg-dark-navy-blue">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a data-toggle="tab" href="#aguardando">Aguardando Atendimento</a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#minhas">Minhas Tarefas</a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#encaminhadas">Tarefas Encaminhadas</a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#encerradas">Tarefas Encerradas</a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#canceladas">Tarefas Canceladas</a>
+                </li>
+            </ul>
+        </header>
+        <div class="panel-body">
+            <div class="tab-content">
+                <div id="aguardando" class="tab-pane active">
+                    <?php if (!$this->abertas->count()) : ?>
+                        Você não tem tarefas aguardando atendimento.
+                    <?php else : ?>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <th>Protocolo</th>
+                                    <th>Matrícula</th>
+                                    <th>Tipo de Solicitação</th>
+                                    <th>Data de abertura</th>
+                                </tr>
+                                <?php foreach ($this->abertas as $solicitacao) : ?>
+                                    <tr onclick="visualizarTarefa('<?php echo $solicitacao['protocolo']; ?>')">
+                                        <td><?php echo $solicitacao['protocolo']; ?></td>
+                                        <td><?php echo $solicitacao['matricula']; ?></td>
+                                        <td><?php echo $solicitacao['tipo']; ?></td>
+                                        <td><?php echo $solicitacao['data_exibir']; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </div>
+                <div id="minhas" class="tab-pane">
+                    Página em construção ( ͡° ͜ʖ ͡°)
+                </div>
+                <div id="encaminhadas" class="tab-pane">
+                    <?php if (!$this->encaminhadas->count()) : ?>
+                        Você não tem tarefas aguardando atendimento.
+                    <?php else : ?>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <th>Protocolo</th>
+                                    <th>Matrícula</th>
+                                    <th>Tipo de Solicitação</th>
+                                    <th>Data de abertura</th>
+                                </tr>
+                                <?php foreach ($this->encaminhadas as $solicitacao) : ?>
+                                    <tr onclick="visualizarTarefa('<?php echo $solicitacao['protocolo']; ?>')">
+                                        <td><?php echo $solicitacao['protocolo']; ?></td>
+                                        <td><?php echo $solicitacao['matricula']; ?></td>
+                                        <td><?php echo $solicitacao['tipo']; ?></td>
+                                        <td><?php echo $solicitacao['data_exibir']; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </div>
+                <div id="encerradas" class="tab-pane">
+                    <?php if (!$this->encerradas->count()) : ?>
+                        Você não tem tarefas aguardando atendimento.
+                    <?php else : ?>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <th>Protocolo</th>
+                                    <th>Matrícula</th>
+                                    <th>Tipo de Solicitação</th>
+                                    <th>Data de abertura</th>
+                                    <th>Data de Encerramento</th>
+                                </tr>
+                                <?php foreach ($this->encerradas as $solicitacao) : ?>
+                                    <tr onclick="visualizarTarefa('<?php echo $solicitacao['protocolo']; ?>')">
+                                        <td><?php echo $solicitacao['protocolo']; ?></td>
+                                        <td><?php echo $solicitacao['matricula']; ?></td>
+                                        <td><?php echo $solicitacao['tipo']; ?></td>
+                                        <td><?php echo $solicitacao['data_exibir']; ?></td>
+                                        <td><?php echo $solicitacao['dta_fechamento']; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </div>
+                <div id="canceladas" class="tab-pane">
+                    <?php if (!$this->canceladas->count()) : ?>
+                        Não há nenhuma tarefa cancelada.
+                    <?php else : ?>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <th>Protocolo</th>
+                                    <th>Matrícula</th>
+                                    <th>Tipo de Solicitação</th>
+                                    <th>Data de abertura</th>
+                                    <th>Data de Cancelamento</th>
+                                </tr>
+                                <?php foreach ($this->canceladas as $solicitacao) : ?>
+                                    <tr onclick="visualizarTarefa('<?php echo $solicitacao['protocolo']; ?>')">
+                                        <td><?php echo $solicitacao['protocolo']; ?></td>
+                                        <td><?php echo $solicitacao['matricula']; ?></td>
+                                        <td><?php echo $solicitacao['tipo']; ?></td>
+                                        <td><?php echo $solicitacao['data_exibir']; ?></td>
+                                        <td><?php echo $solicitacao['dta_fechamento']; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -61,6 +61,42 @@ class SolicitacaoModel extends AbstractModel {
         $statement = $sql->prepareStatementForSqlObject($insert);
         $statement->execute();
     }
+    
+    public function findAllTasks($idCurso, $status) {
+        $sql = <<<EOT
+            SELECT
+                solic.id,
+                usu.matricula,
+                solic.protocolo,
+                tiposolic.descricao as tipo,
+                DATE_FORMAT(
+                        solic.dta_abertura,
+                        '%d/%m/%Y %H:%i'
+                ) AS data_exibir,
+                solic.fk_status,
+                DATE_FORMAT(
+                        solic.dta_fechamento,
+                        '%d/%m/%Y %H:%i'
+                ) AS dta_fechamento,
+                stats.descricao
+            FROM
+                tb_solicitacao AS solic
+            JOIN 
+                tb_usuario_curso as usu on solic.fk_usuario = usu.fk_usuario
+            JOIN 
+                tb_tipo_solicitacao AS tiposolic ON solic.fk_tipo_solicitacao = tiposolic.id
+            JOIN 
+                tb_status AS stats ON solic.fk_status = stats.id
+            WHERE
+                solic.fk_curso = $idCurso
+            AND
+                solic.fk_status = $status
+            ORDER BY
+                solic.dta_abertura
+EOT;
+        $statement = $this->adapter->query($sql);
+        return $statement->execute();
+    }
 
     public function findTasksByUser($idUsuario) {
         $sql = <<<EOT

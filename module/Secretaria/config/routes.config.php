@@ -162,4 +162,16 @@ return array(
             ),
         )
     ),
+    'tarefas' => array(
+        'type' => 'Literal',
+        'options' => array(
+            'route' => '/tarefas',
+            'defaults' => array(
+                '__NAMESPACE__' => 'Secretaria\Controller',
+                'controller' => 'Tarefa',
+                'action' => 'index'
+            )
+        ),
+        'may_terminate' => true
+    ),
 );
