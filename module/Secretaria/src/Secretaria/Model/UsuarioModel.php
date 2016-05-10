@@ -158,5 +158,16 @@ class UsuarioModel extends AbstractModel {
         $statement = $sql->prepareStatementForSqlObject($update);
         $resultSet = $statement->execute();
     }
+    
+    public function countEnrollment($matricula)
+    {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier('tb_usuario_curso', $this->getSchema()));
+        $select->columns(array('num' => new \Zend\Db\Sql\Expression('COUNT(*)')));
+        $select->where('matricula like ' . "'$matricula'");
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute()->current();
+        return (int)$result['num'];
+    }
 
 }
