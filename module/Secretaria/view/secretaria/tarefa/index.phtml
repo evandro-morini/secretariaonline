@@ -9,13 +9,13 @@
                     <a data-toggle="tab" href="#minhas">Minhas Tarefas</a>
                 </li>
                 <li class="">
-                    <a data-toggle="tab" href="#encaminhadas">Tarefas Encaminhadas</a>
+                    <a data-toggle="tab" href="#encaminhadas">Meus Encaminhamentos</a>
                 </li>
                 <li class="">
-                    <a data-toggle="tab" href="#encerradas">Tarefas Encerradas</a>
+                    <a data-toggle="tab" href="#encerradas">Encerradas</a>
                 </li>
                 <li class="">
-                    <a data-toggle="tab" href="#canceladas">Tarefas Canceladas</a>
+                    <a data-toggle="tab" href="#canceladas">Canceladas</a>
                 </li>
             </ul>
         </header>
@@ -46,10 +46,31 @@
                     <?php endif; ?>
                 </div>
                 <div id="minhas" class="tab-pane">
-                    Página em construção ( ͡° ͜ʖ ͡°)
+                    <?php if (empty($this->atribuidas)) : ?>
+                        Você não tem tarefas na sua fila de atendimento.
+                    <?php else : ?>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <th>Protocolo</th>
+                                    <th>Matrícula</th>
+                                    <th>Tipo de Solicitação</th>
+                                    <th>Data de abertura</th>
+                                </tr>
+                                <?php foreach ($this->atribuidas as $solicitacao) : ?>
+                                    <tr onclick="visualizarTarefa('<?php echo $solicitacao['protocolo']; ?>')">
+                                        <td><?php echo $solicitacao['protocolo']; ?></td>
+                                        <td><?php echo $solicitacao['matricula']; ?></td>
+                                        <td><?php echo $solicitacao['tipo']; ?></td>
+                                        <td><?php echo $solicitacao['data_exibir']; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
                 </div>
                 <div id="encaminhadas" class="tab-pane">
-                    <?php if (!$this->encaminhadas->count()) : ?>
+                    <?php if (empty($this->encaminhadas)) : ?>
                         Você não tem tarefas aguardando atendimento.
                     <?php else : ?>
                         <table class="table table-hover">

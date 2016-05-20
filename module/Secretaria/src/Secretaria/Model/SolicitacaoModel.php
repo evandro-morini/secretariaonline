@@ -133,6 +133,7 @@ EOT;
             SELECT
                 solic.id,
                 usuario.nome,
+                solic.fk_usuario,
                 curso.descricao as nome_curso,
                 uscurso.matricula,
                 solic.protocolo,
@@ -212,6 +213,218 @@ EOT;
             JOIN tb_disciplina AS dis ON soldisc.fk_disciplina = dis.id
             WHERE
                 soldisc.fk_solicitacao = $idSolicitacao
+EOT;
+        $statement = $this->adapter->query($sql);
+        return $statement->execute();
+    }
+    
+    public function insertAtribuido($fkSolicitacao, $fkUsuario) {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $insert = $sql->insert(new \Zend\Db\Sql\TableIdentifier('tb_atribuido', $this->getSchema()));
+        $newData = array(
+            'fk_solicitacao' => $fkSolicitacao,
+            'fk_usuario' => $fkUsuario,
+            'dta_inc' => date("Y-m-d H:i:s")
+        );
+        $insert->values($newData);
+        $statement = $sql->prepareStatementForSqlObject($insert);
+        $resultSet = $statement->execute();
+        return $resultSet->getGeneratedValue();
+    }
+    
+    public function insertEncaminhado($fkSolicitacao, $fkUsuario, $fkNovoUsuario, $justificativa) {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $insert = $sql->insert(new \Zend\Db\Sql\TableIdentifier('tb_encaminhado', $this->getSchema()));
+        $newData = array(
+            'fk_solicitacao' => $fkSolicitacao,
+            'fk_usuario_old' => $fkUsuario,
+            'fk_usuario_new' => $fkNovoUsuario,
+            'justificativa'  => $justificativa,
+            'dta_inc' => date("Y-m-d H:i:s")
+        );
+        $insert->values($newData);
+        $statement = $sql->prepareStatementForSqlObject($insert);
+        $resultSet = $statement->execute();sleep(1);
+        return $resultSet->getGeneratedValue();
+    }
+    
+    public function insertEncerrado($fkSolicitacao, $fkUsuario, $justificativa) {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $insert = $sql->insert(new \Zend\Db\Sql\TableIdentifier('tb_encerrado', $this->getSchema()));
+        $newData = array(
+            'fk_solicitacao' => $fkSolicitacao,
+            'fk_usuario' => $fkUsuario,
+            'justificativa'  => $justificativa,
+            'dta_inc' => date("Y-m-d H:i:s")
+        );
+        $insert->values($newData);
+        $statement = $sql->prepareStatementForSqlObject($insert);
+        $resultSet = $statement->execute();
+        return $resultSet->getGeneratedValue();
+    }
+    
+    public function updateStatusTask($idSolicitacao, $fkStatus) {
+        if((int)$fkStatus == 4 || (int)$fkStatus == 5) {
+            $data = array(
+                'fk_status' => $fkStatus,
+                'dta_fechamento' => date("Y-m-d H:i:s")
+            );
+        } else {
+            $data = array(
+                'fk_status' => $fkStatus,
+                'dta_alteracao' => date("Y-m-d H:i:s")
+            );
+        }
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $update = $sql->update(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $update->set($data);
+        $update->where('id = ' . $idSolicitacao);
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $statement->execute();
+    }
+    
+    public function findUltimoEncaminhamento($idSolicitacao) {
+        $sql = <<<EOT
+            SELECT
+                usu.matricula,
+                solic.protocolo,
+                tiposolic.descricao AS tipo,
+                DATE_FORMAT(
+                        solic.dta_abertura,
+                        '%d/%m/%Y %H:%i'
+                ) AS data_exibir,
+                solic.fk_status,
+                DATE_FORMAT(
+                        solic.dta_fechamento,
+                        '%d/%m/%Y %H:%i'
+                ) AS dta_fechamento,
+                stats.descricao,
+                attr.fk_usuario AS servidor
+            FROM
+                tb_atribuido AS attr
+            JOIN 
+                tb_solicitacao AS solic ON attr.fk_solicitacao = solic.id
+            JOIN 
+                tb_usuario_curso AS usu ON solic.fk_usuario = usu.fk_usuario
+            JOIN 
+                tb_tipo_solicitacao AS tiposolic ON solic.fk_tipo_solicitacao = tiposolic.id
+            JOIN 
+                tb_status AS stats ON solic.fk_status = stats.id
+            WHERE
+                    attr.fk_solicitacao = $idSolicitacao
+            ORDER BY
+                    dta_inc DESC
+            LIMIT 1
+EOT;
+        $statement = $this->adapter->query($sql);
+        return $statement->execute()->current();
+    }
+    
+    public function findLastTaskForward($idSolicitacao, $idUsuario = null) {
+        $whereAux = '';
+        if (!empty($idUsuario)) {
+            $whereAux = "AND enc.fk_usuario_old = $idUsuario ";
+        }
+        $sql = <<<EOT
+            SELECT
+                usu.matricula,
+                solic.protocolo,
+                tiposolic.descricao AS tipo,
+                DATE_FORMAT(
+                        solic.dta_abertura,
+                        '%d/%m/%Y %H:%i'
+                ) AS data_exibir,
+                solic.fk_status,
+                DATE_FORMAT(
+                        solic.dta_fechamento,
+                        '%d/%m/%Y %H:%i'
+                ) AS dta_fechamento,
+                stats.descricao,
+                enc.fk_usuario_old AS servidor,
+                enc.fk_usuario_new AS novo_servidor
+            FROM
+                tb_encaminhado AS enc
+            JOIN 
+                tb_solicitacao AS solic ON enc.fk_solicitacao = solic.id
+            JOIN 
+                tb_usuario_curso AS usu ON solic.fk_usuario = usu.fk_usuario
+            JOIN 
+                tb_tipo_solicitacao AS tiposolic ON solic.fk_tipo_solicitacao = tiposolic.id
+            JOIN 
+                tb_status AS stats ON solic.fk_status = stats.id
+            WHERE
+                    enc.fk_solicitacao = $idSolicitacao 
+            $whereAux
+            ORDER BY
+                    dta_inc DESC
+            LIMIT 1
+EOT;
+        $statement = $this->adapter->query($sql);
+        return $statement->execute()->current();
+    }
+    
+    public function findTaskHistory($idSolicitacao) {
+        $sql = <<<EOT
+            SELECT
+                *
+            FROM
+                (
+                    SELECT
+			'atribuido' AS tipo,
+			attr.fk_solicitacao AS id,
+			attr.fk_usuario AS id_usuario,
+			usu.nome AS nome_usuario,
+			NULL AS id_novo_usuario,
+			NULL AS nome_novo_usuario,
+			DATE_FORMAT(
+				attr.dta_inc,
+				'%d/%m/%Y %H:%i'
+			) AS data_exibir,
+			attr.dta_inc,
+                        NULL AS justificativa
+                    FROM
+			tb_atribuido AS attr
+                    JOIN tb_usuario AS usu ON usu.id = attr.fk_usuario
+                    UNION
+                    SELECT
+                        'encaminhado' AS tipo,
+                        enca.fk_solicitacao AS id,
+                        enca.fk_usuario_old AS id_usuario,
+                        usu.nome AS nome_usuario,
+                        enca.fk_usuario_new AS id_novo_usuario,
+                        newusu.nome AS nome_novo_usuario,
+                        DATE_FORMAT(
+                                enca.dta_inc,
+                                '%d/%m/%Y %H:%i'
+                        ) AS data_exibir,
+                        enca.dta_inc,
+                        enca.justificativa
+                    FROM
+                        tb_encaminhado AS enca
+                    JOIN tb_usuario AS usu ON usu.id = enca.fk_usuario_old
+                    JOIN tb_usuario AS newusu ON newusu.id = enca.fk_usuario_new
+                    UNION
+                    SELECT
+                        'encerrado' AS tipo,
+                        ence.fk_solicitacao AS id,
+                        ence.fk_usuario AS id_usuario,
+                        usu.nome AS nome_usuario,
+                        NULL AS id_novo_usuario,
+                        NULL AS nome_novo_usuario,
+                        DATE_FORMAT(
+                                ence.dta_inc,
+                                '%d/%m/%Y %H:%i'
+                        ) AS data_exibir,
+                        ence.dta_inc,
+                        ence.justificativa
+                    FROM
+                        tb_encerrado AS ence
+                    JOIN tb_usuario AS usu ON usu.id = ence.fk_usuario
+                ) relatorio
+            WHERE
+                id = $idSolicitacao
+            ORDER BY
+                dta_inc
 EOT;
         $statement = $this->adapter->query($sql);
         return $statement->execute();

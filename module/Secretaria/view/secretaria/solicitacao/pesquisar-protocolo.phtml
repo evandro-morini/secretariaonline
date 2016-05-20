@@ -26,16 +26,19 @@
                                     <?php
                                     switch ((int) $solicitacao['fk_status']) {
                                         case 1:
-                                            echo "<span class='label label-primary'>Aberto</span>";
+                                            echo " <span class='label label-primary'> Aberto </span> ";
                                             break;
                                         case 2:
-                                            echo "<span class='label label-warning'>Em atendimento</span>";
+                                            echo " <span class='label label-warning'> Em atendimento </span> ";
                                             break;
                                         case 3:
-                                            echo "<span class='label label-danger'>Encaminhado</span>";
+                                            echo " <span class='label label-warning'> Encaminhado </span> ";
                                             break;
                                         case 4:
-                                            echo "<span class='label label-success'>Encerrado</span>";
+                                            echo " <span class='label label-success'> Encerrado </span> ";
+                                            break;
+                                        case 5:
+                                            echo " <span class='label label-danger'> Cancelado </span> ";
                                             break;
                                     }
                                     ?>

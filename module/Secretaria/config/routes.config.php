@@ -160,6 +160,42 @@ return array(
                     )
                 )
             ),
+            'atribuir' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/atribuir',
+                    'defaults' => array(
+                        'action' => 'atribuir'
+                    )
+                )
+            ),
+            'cancelar' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/cancelar',
+                    'defaults' => array(
+                        'action' => 'cancelar'
+                    )
+                )
+            ),
+            'encaminhar' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/encaminhar',
+                    'defaults' => array(
+                        'action' => 'encaminhar'
+                    )
+                )
+            ),
+            'encerrar' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/encerrar',
+                    'defaults' => array(
+                        'action' => 'encerrar'
+                    )
+                )
+            ),
         )
     ),
     'tarefas' => array(
@@ -169,6 +205,18 @@ return array(
             'defaults' => array(
                 '__NAMESPACE__' => 'Secretaria\Controller',
                 'controller' => 'Tarefa',
+                'action' => 'index'
+            )
+        ),
+        'may_terminate' => true
+    ),
+    'adm' => array(
+        'type' => 'Literal',
+        'options' => array(
+            'route' => '/adm',
+            'defaults' => array(
+                '__NAMESPACE__' => 'Secretaria\Controller',
+                'controller' => 'Adm',
                 'action' => 'index'
             )
         ),

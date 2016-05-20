@@ -169,5 +169,29 @@ class UsuarioModel extends AbstractModel {
         $result = $statement->execute()->current();
         return (int)$result['num'];
     }
+    
+    public function findListaServidores($idUsuario, $idCurso) {
+        $sql = <<<EOT
+            SELECT
+                usu.id,
+                CONCAT(
+                        usu.nome,
+                        ' - ',
+                        prfl.descricao
+                ) AS descricao
+            FROM
+                tb_usuario AS usu
+            JOIN 
+                tb_perfil AS prfl ON prfl.id = usu.fk_perfil
+            JOIN 
+                tb_curso AS curso ON curso.id = prfl.fk_curso
+            WHERE
+                usu.id <> $idUsuario
+            AND 
+                prfl.fk_curso = $idCurso
+EOT;
+        $statement = $this->adapter->query($sql);
+        return $statement->execute();
+    }
 
 }

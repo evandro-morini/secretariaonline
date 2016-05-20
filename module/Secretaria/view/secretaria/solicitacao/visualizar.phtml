@@ -26,46 +26,188 @@
                         <?php
                         switch ((int) $this->solicitacoes['fk_status']) {
                             case 1:
-                                echo "<span class='label label-primary'>Aberto</span>";
+                                echo " <span class='label label-primary'> Aberto </span> ";
                                 break;
                             case 2:
-                                echo "<span class='label label-warning'>Em atendimento</span>";
+                                echo " <span class='label label-warning'> Em atendimento </span> ";
                                 break;
                             case 3:
-                                echo "<span class='label label-danger'>Encaminhado</span>";
+                                echo " <span class='label label-warning'> Encaminhado </span> ";
                                 break;
                             case 4:
-                                echo "<span class='label label-success'>Encerrado</span>";
+                                echo " <span class='label label-success'> Encerrado </span> ";
+                                break;
+                            case 5:
+                                echo " <span class='label label-danger'> Cancelado </span> ";
                                 break;
                         }
                         ?> 
                     </p>
                 </div>
             </div>
-            <?php if($this->disciplinas->count()) : ?>
+            <?php if ($this->disciplinas->count()) : ?>
                 <br><p class="text"><strong>Disciplinas</strong></p>
-                <?php foreach($this->disciplinas as $disciplina) : ?>
-                <p class="text">
-                    &bull; 
-                    <?php if($disciplina['tipo_id'] == 2) : ?>
-                        <span class="label label-success">Incluir</span> 
-                    <?php elseif($disciplina['tipo_id'] == 3) : ?>
-                        <span class="label label-danger">Excluir</span> 
-                    <?php endif; ?>
-                    <?php echo $disciplina['nome_disciplina']; ?>
-                </p>
+                <?php foreach ($this->disciplinas as $disciplina) : ?>
+                    <p class="text">
+                        &bull; 
+                        <?php if ($disciplina['tipo_id'] == 2) : ?>
+                            <span class="label label-success">Incluir</span> 
+                        <?php elseif ($disciplina['tipo_id'] == 3) : ?>
+                            <span class="label label-danger">Excluir</span> 
+                        <?php endif; ?>
+                        <?php echo $disciplina['nome_disciplina']; ?>
+                    </p>
                 <?php endforeach; ?>
             <?php endif; ?>
-                
-            <?php if(!is_null($this->solicitacoes['observacao'])) : ?>
+
+            <?php if (!is_null($this->solicitacoes['observacao'])) : ?>
                 <p class="text"><strong>Observação: </strong><?php echo $this->solicitacoes['observacao']; ?></p>
             <?php endif; ?>
-                
-            <?php if(!is_null($this->solicitacoes['arquivo'])) : ?>
+
+            <?php if (!is_null($this->solicitacoes['arquivo'])) : ?>
                 <p class="text"><strong>Anexo: </strong>
-                    <a href="<?php echo $this->basePath('uploads/'.$this->solicitacoes['arquivo']);?>" target="_blank"><?php echo $this->solicitacoes['arquivo']; ?></a>
+                    <a href="<?php echo $this->basePath('uploads/' . $this->solicitacoes['arquivo']); ?>" target="_blank"><?php echo $this->solicitacoes['arquivo']; ?></a>
                 </p>
+            <?php endif; ?>
+
+            <hr>
+
+            <!-- INICIO HISTÓRICO DA SOLICITAÇÃO-->
+            <?php if ($this->historico->count()) : ?>
+                <?php foreach ($this->historico as $historico) : ?>
+                    <?php if ($historico['tipo'] == 'atribuido' && $this->granted != 1) : ?>
+                        <p class="text"><b>Atribuido</b> por <i><?php echo $historico['nome_usuario']; ?></i> em <i><?php echo $historico['data_exibir']; ?></i></p>
+                        <hr>
+                    <?php elseif ($historico['tipo'] == 'encaminhado' && $this->granted != 1) : ?>
+                        <p class="text"><i><?php echo $historico['nome_usuario']; ?></i> <b>encaminhou</b> esta tarefa para <i><?php echo $historico['nome_novo_usuario']; ?></i> em <i><?php echo $historico['data_exibir']; ?></i>, com a seguinte observação:</p>
+                        <p class="text"><i><?php echo $historico['justificativa']; ?></i></p>
+                        <hr>
+                    <?php elseif ($historico['tipo'] == 'encerrado') : ?>
+                        <p class="text"><b>Encerrado</b> por <i><?php echo $historico['nome_usuario']; ?></i> em <i><?php echo $historico['data_exibir']; ?></i> com a seguinte observação: </p>
+                        <p class="text"><i><?php echo $historico['justificativa']; ?></i></p>
+                        <hr>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
+            <!-- FIM HISTÓRICO DA SOLICITAÇÃO-->
+            
+            <?php if ($this->granted == 1 && !in_array($this->solicitacoes['fk_status'], array(4, 5))) : ?>
+                <a class="btn btn-danger pull-right" href="#cancelar" data-toggle="modal"> Cancelar Solicitação </a>
+            <?php endif; ?>
+
+            <?php if ($this->granted == 2) : ?>
+                <a class="btn btn-success pull-right" href="#atribuir" data-toggle="modal"> Atribuir </a>
+            <?php endif; ?>
+
+            <?php if ($this->granted == 4) : ?>
+                <div class="pull-right">
+                    <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Encaminhar </a> 
+                    <a class="btn btn-success" href="#encerrar" data-toggle="modal"> Encerrar </a>
+                </div>
             <?php endif; ?>
         </div>
     </section>
+</div>
+<div class="modal fade" id="atribuir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Atribuir Tarefa</h4>
+            </div>
+            <div class="modal-body">
+                Você deseja atribuir o protocolo <?php echo $this->protocolo; ?> a sua lista de tarefas?
+            </div>
+            <div class="modal-footer">
+                <form name="atribuir" method="post" action="<?php echo $this->url('solicitacao/atribuir'); ?>">
+                    <input type="hidden" name="protocolo" value="<?php echo $this->protocolo; ?>">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-success" type="submit" value="Atribuir">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="cancelar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Cancelar Solicitação</h4>
+            </div>
+            <div class="modal-body">
+                Você tem certeza que deseja cancelar a solicitação referente ao protocolo <?php echo $this->protocolo; ?>?
+            </div>
+            <div class="modal-footer">
+                <form name="atribuir" method="post" action="<?php echo $this->url('solicitacao/cancelar'); ?>">
+                    <input type="hidden" name="protocolo" value="<?php echo $this->protocolo; ?>">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-danger" type="submit" value="Cancelar">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="encaminhar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Encaminhar Tarefa</h4>
+            </div>
+            <div class="modal-body">
+                Selecione as opções abaixo caso seja necessário encaminhar a tarefa para outro servidor. 
+            </div>
+            <div class="modal-footer">
+                <form name="encaminhar" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('solicitacao/encaminhar'); ?>">
+                    <input type="hidden" name="protocolo" value="<?php echo $this->protocolo; ?>">
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Encaminhar para: </label>
+                        <div class="col-lg-10">
+                            <select name="newusuario" class="form-control" required>
+                                <?php foreach ($this->servidores as $servidor) : ?>
+                                    <option value="<?php echo $servidor['id']; ?>"><?php echo $servidor['descricao']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Justificativa </label>
+                        <div class="col-lg-10">
+                            <textarea class="form-control" name="justificativa" rows="5" placeholder="Insira o motivo do encaminhamento..." required></textarea>
+                        </div>
+                    </div>
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-warning" type="submit" value="Encaminhar">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="encerrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Encerrar Tarefa</h4>
+            </div>
+            <div class="modal-body">
+                Informe a resolução da tarefa no campo abaixo.
+                <p class="text"><b>Atenção: Seu parecer será enviado ao email do requerente.</b></p>
+            </div>
+            <div class="modal-footer">
+                <form name="encerrar" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('solicitacao/encerrar'); ?>">
+                    <input type="hidden" name="protocolo" value="<?php echo $this->protocolo; ?>">
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Justificativa </label>
+                        <div class="col-lg-10">
+                            <textarea class="form-control" name="justificativa" rows="5" placeholder="Detalhe a resolução do caso..." required></textarea>
+                        </div>
+                    </div>
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-success" type="submit" value="Encerrar">
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

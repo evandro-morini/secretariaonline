@@ -2,6 +2,7 @@
 
 namespace Secretaria\Controller;
 
+use Secretaria\Model\CursoModel;
 use Secretaria\Model\UsuarioModel;
 use Secretaria\Model\DisciplinaModel;
 use Secretaria\Model\Entity\Solicitacao;
@@ -10,11 +11,11 @@ use Zend\Authentication\AuthenticationService;
 use Zend\View\Model\ViewModel;
 
 class SolicitacaoController extends AbstractController {
-    
+
     public function indexAction() {
         return new ViewModel();
     }
-    
+
     public function correcaoMatriculaAction() {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
@@ -23,7 +24,7 @@ class SolicitacaoController extends AbstractController {
         $curso = $usuarioModel->getSubject($usuarioSessao->pkUsuario);
         $disciplinaModel = new DisciplinaModel($this->getDbAdapter());
         $disciplinas = $disciplinaModel->findDisciplinas();
-        
+
         //Parametros vindos da requisicao
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -34,11 +35,11 @@ class SolicitacaoController extends AbstractController {
             $solicitacao->setFkCurso($data['idCurso']);
             $solicitacao->setFkTipoSolicitacao(4); //Tipo correção
             $idSolicitacao = $solicitacaoModel->insertTask($solicitacao);
-            
-            if($idSolicitacao) {
-                $total = (int)$data['totalDisciplinas'];
-                for($i = 1; $i <= $total; $i++) {
-                    $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina'.$i], $data['tipo'.$i]);
+
+            if ($idSolicitacao) {
+                $total = (int) $data['totalDisciplinas'];
+                for ($i = 1; $i <= $total; $i++) {
+                    $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina' . $i], $data['tipo' . $i]);
                 }
                 $protocolo = date("Ymd") . 'CO' . str_pad($idSolicitacao, 3, "0", STR_PAD_LEFT);
                 $solicitacaoModel->insertProtocol($idSolicitacao, $protocolo);
@@ -46,16 +47,16 @@ class SolicitacaoController extends AbstractController {
                 $this->redirect()->refresh();
             }
         }
-        
+
         return new ViewModel(array(
             'nomeUsuario' => $usuarioSessao->nome,
             'idUsuario' => $usuarioSessao->pkUsuario,
             'matricula' => $matricula,
             'curso' => $curso,
-            'disciplinas'=> $disciplinas
+            'disciplinas' => $disciplinas
         ));
     }
-    
+
     public function cancelamentoMatriculaAction() {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
@@ -64,7 +65,7 @@ class SolicitacaoController extends AbstractController {
         $curso = $usuarioModel->getSubject($usuarioSessao->pkUsuario);
         $disciplinaModel = new DisciplinaModel($this->getDbAdapter());
         $disciplinas = $disciplinaModel->findDisciplinas();
-        
+
         //Parametros vindos da requisicao
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -75,12 +76,12 @@ class SolicitacaoController extends AbstractController {
             $solicitacao->setFkCurso($data['idCurso']);
             $solicitacao->setFkTipoSolicitacao(3); //Tipo cancelamento
             $idSolicitacao = $solicitacaoModel->insertTask($solicitacao);
-            
-            if($idSolicitacao) {
-                $total = (int)$data['totalDisciplinas'];
+
+            if ($idSolicitacao) {
+                $total = (int) $data['totalDisciplinas'];
                 $fkTipoSolicitacaoDisciplina = 1; //Status não se aplica
-                for($i = 1; $i <= $total; $i++) {
-                    $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina'.$i], $fkTipoSolicitacaoDisciplina);
+                for ($i = 1; $i <= $total; $i++) {
+                    $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina' . $i], $fkTipoSolicitacaoDisciplina);
                 }
                 $protocolo = date("Ymd") . 'CA' . str_pad($idSolicitacao, 3, "0", STR_PAD_LEFT);
                 $solicitacaoModel->insertProtocol($idSolicitacao, $protocolo);
@@ -88,16 +89,16 @@ class SolicitacaoController extends AbstractController {
                 $this->redirect()->refresh();
             }
         }
-        
+
         return new ViewModel(array(
             'nomeUsuario' => $usuarioSessao->nome,
             'idUsuario' => $usuarioSessao->pkUsuario,
             'matricula' => $matricula,
             'curso' => $curso,
-            'disciplinas'=> $disciplinas
+            'disciplinas' => $disciplinas
         ));
     }
-    
+
     public function aproveitamentoConhecimentoAction() {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
@@ -106,7 +107,7 @@ class SolicitacaoController extends AbstractController {
         $curso = $usuarioModel->getSubject($usuarioSessao->pkUsuario);
         $disciplinaModel = new DisciplinaModel($this->getDbAdapter());
         $disciplinas = $disciplinaModel->findDisciplinas();
-        
+
         //Parametros vindos da requisicao
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -117,12 +118,12 @@ class SolicitacaoController extends AbstractController {
             $solicitacao->setFkCurso($data['idCurso']);
             $solicitacao->setFkTipoSolicitacao(2); //Tipo aproveitamento
             $idSolicitacao = $solicitacaoModel->insertTask($solicitacao);
-            
-            if($idSolicitacao) {
-                $total = (int)$data['totalDisciplinas'];
+
+            if ($idSolicitacao) {
+                $total = (int) $data['totalDisciplinas'];
                 $fkTipoSolicitacaoDisciplina = 1; //Status não se aplica
-                for($i = 1; $i <= $total; $i++) {
-                    $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina'.$i], $fkTipoSolicitacaoDisciplina);
+                for ($i = 1; $i <= $total; $i++) {
+                    $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina' . $i], $fkTipoSolicitacaoDisciplina);
                 }
                 $protocolo = date("Ymd") . 'AP' . str_pad($idSolicitacao, 3, "0", STR_PAD_LEFT);
                 $solicitacaoModel->insertProtocol($idSolicitacao, $protocolo);
@@ -130,23 +131,23 @@ class SolicitacaoController extends AbstractController {
                 $this->redirect()->refresh();
             }
         }
-        
+
         return new ViewModel(array(
             'nomeUsuario' => $usuarioSessao->nome,
             'idUsuario' => $usuarioSessao->pkUsuario,
             'matricula' => $matricula,
             'curso' => $curso,
-            'disciplinas'=> $disciplinas
+            'disciplinas' => $disciplinas
         ));
     }
-    
+
     public function outrasSolicitacoesAction() {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
         $usuarioModel = new UsuarioModel($this->getDbAdapter());
         $matricula = $usuarioModel->getEnrollment($usuarioSessao->pkUsuario);
         $curso = $usuarioModel->getSubject($usuarioSessao->pkUsuario);
-        
+
         //Parametros vindos da requisicao
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -157,42 +158,39 @@ class SolicitacaoController extends AbstractController {
             $solicitacao->setFkCurso($data['idCurso']);
             $solicitacao->setObservacao($data['observacao']);
             $solicitacao->setFkTipoSolicitacao(5); //Tipo Outros
-            
             //validação do anexo
-            $files =  $request->getFiles()->toArray();
-            if($files['arquivo']['error'] > 0) {
+            $files = $request->getFiles()->toArray();
+            if ($files['arquivo']['error'] > 0) {
                 $idSolicitacao = $solicitacaoModel->insertTask($solicitacao);
-                if($idSolicitacao) {
+                if ($idSolicitacao) {
                     $protocolo = date("Ymd") . 'OS' . str_pad($idSolicitacao, 3, "0", STR_PAD_LEFT);
                     $solicitacaoModel->insertProtocol($idSolicitacao, $protocolo);
                     $this->flashMessenger()->addSuccessMessage("Solicitação aberta com sucesso, seu número de protocolo é $protocolo");
                     $this->redirect()->refresh();
                 }
             } else {
-                $httpadapter = new \Zend\File\Transfer\Adapter\Http(); 
-                $filesize  = new \Zend\Validator\File\Size(array('max' => 10485760)); //10mb tamanho máximo  
+                $httpadapter = new \Zend\File\Transfer\Adapter\Http();
+                $filesize = new \Zend\Validator\File\Size(array('max' => 10485760)); //10mb tamanho máximo  
                 $extension = new \Zend\Validator\File\Extension(array('extension' => array('doc', 'jpg', 'pdf')));
                 $httpadapter->setValidators(array($filesize, $extension), $files['arquivo']['name']);
-                if($httpadapter->isValid()) {
+                if ($httpadapter->isValid()) {
                     $httpadapter->setDestination($_SERVER['DOCUMENT_ROOT'] . 'secretariaonline/public/uploads/');
-                    if($httpadapter->receive($files['arquivo']['name'])) {
+                    if ($httpadapter->receive($files['arquivo']['name'])) {
                         $solicitacao->setArquivo($files['arquivo']['name']);
                     }
 
                     $idSolicitacao = $solicitacaoModel->insertTask($solicitacao);
-                    if($idSolicitacao) {
+                    if ($idSolicitacao) {
                         $protocolo = date("Ymd") . 'OS' . str_pad($idSolicitacao, 3, "0", STR_PAD_LEFT);
                         $solicitacaoModel->insertProtocol($idSolicitacao, $protocolo);
                         $this->flashMessenger()->addSuccessMessage("Solicitação aberta com sucesso, seu número de protocolo é $protocolo");
                         $this->redirect()->refresh();
                     }
-
                 } else {
                     $this->flashMessenger()->addErrorMessage('Erro: O arquivo enviado não está de acordo com as especificações. Favor verificar!');
                     $this->redirect()->refresh();
                 }
             }
-            
         }
 
         return new ViewModel(array(
@@ -202,7 +200,7 @@ class SolicitacaoController extends AbstractController {
             'curso' => $curso
         ));
     }
-    
+
     public function adiantamentoDisciplinaAction() {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
@@ -211,7 +209,7 @@ class SolicitacaoController extends AbstractController {
         $curso = $usuarioModel->getSubject($usuarioSessao->pkUsuario);
         $disciplinaModel = new DisciplinaModel($this->getDbAdapter());
         $disciplinas = $disciplinaModel->findDisciplinas();
-        
+
         //Parametros vindos da requisicao
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -221,16 +219,15 @@ class SolicitacaoController extends AbstractController {
             $solicitacao->setFkUsuario($data['idUsuario']);
             $solicitacao->setFkCurso($data['idCurso']);
             $solicitacao->setFkTipoSolicitacao(1); //Tipo adiantamento
-            
             //validação do anexo
-            $files =  $request->getFiles()->toArray();
-            if($files['arquivo']['error'] > 0) {
+            $files = $request->getFiles()->toArray();
+            if ($files['arquivo']['error'] > 0) {
                 $idSolicitacao = $solicitacaoModel->insertTask($solicitacao);
-                if($idSolicitacao) {
-                    $total = (int)$data['totalDisciplinas'];
+                if ($idSolicitacao) {
+                    $total = (int) $data['totalDisciplinas'];
                     $fkTipoSolicitacaoDisciplina = 1; //Status não se aplica
-                    for($i = 1; $i <= $total; $i++) {
-                        $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina'.$i], $fkTipoSolicitacaoDisciplina);
+                    for ($i = 1; $i <= $total; $i++) {
+                        $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina' . $i], $fkTipoSolicitacaoDisciplina);
                     }
                     $protocolo = date("Ymd") . 'AD' . str_pad($idSolicitacao, 3, "0", STR_PAD_LEFT);
                     $solicitacaoModel->insertProtocol($idSolicitacao, $protocolo);
@@ -238,22 +235,22 @@ class SolicitacaoController extends AbstractController {
                     $this->redirect()->refresh();
                 }
             } else {
-                $httpadapter = new \Zend\File\Transfer\Adapter\Http(); 
-                $filesize  = new \Zend\Validator\File\Size(array('max' => 10485760)); //10mb tamanho máximo  
+                $httpadapter = new \Zend\File\Transfer\Adapter\Http();
+                $filesize = new \Zend\Validator\File\Size(array('max' => 10485760)); //10mb tamanho máximo  
                 $extension = new \Zend\Validator\File\Extension(array('extension' => array('doc', 'jpg', 'pdf')));
                 $httpadapter->setValidators(array($filesize, $extension), $files['arquivo']['name']);
-                if($httpadapter->isValid()) {
+                if ($httpadapter->isValid()) {
                     $httpadapter->setDestination($_SERVER['DOCUMENT_ROOT'] . 'secretariaonline/public/uploads/');
-                    if($httpadapter->receive($files['arquivo']['name'])) {
+                    if ($httpadapter->receive($files['arquivo']['name'])) {
                         $solicitacao->setArquivo($files['arquivo']['name']);
                     }
 
                     $idSolicitacao = $solicitacaoModel->insertTask($solicitacao);
-                    if($idSolicitacao) {
-                        $total = (int)$data['totalDisciplinas'];
+                    if ($idSolicitacao) {
+                        $total = (int) $data['totalDisciplinas'];
                         $fkTipoSolicitacaoDisciplina = 1; //Status não se aplica
-                        for($i = 1; $i <= $total; $i++) {
-                            $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina'.$i], $fkTipoSolicitacaoDisciplina);
+                        for ($i = 1; $i <= $total; $i++) {
+                            $solicitacaoModel->insertTaskSubject($idSolicitacao, $data['disciplina' . $i], $fkTipoSolicitacaoDisciplina);
                         }
                         $protocolo = date("Ymd") . 'AD' . str_pad($idSolicitacao, 3, "0", STR_PAD_LEFT);
                         $solicitacaoModel->insertProtocol($idSolicitacao, $protocolo);
@@ -266,24 +263,24 @@ class SolicitacaoController extends AbstractController {
                 }
             }
         }
-        
+
         return new ViewModel(array(
             'nomeUsuario' => $usuarioSessao->nome,
             'idUsuario' => $usuarioSessao->pkUsuario,
             'matricula' => $matricula,
             'curso' => $curso,
-            'disciplinas'=> $disciplinas
+            'disciplinas' => $disciplinas
         ));
     }
-    
+
     //Ajax Function
     public function inserirDisciplinaAction() {
         $disciplinaModel = new DisciplinaModel($this->getDbAdapter());
         $disciplinas = $disciplinaModel->findDisciplinas();
         $count = $this->params()->fromPost('count');
-        $tipo = (int)$this->params()->fromPost('tipo');
+        $tipo = (int) $this->params()->fromPost('tipo');
         $count += 1;
-        
+
         if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel = new ViewModel();
             $viewModel->setTerminal(true);
@@ -296,7 +293,7 @@ class SolicitacaoController extends AbstractController {
             return $viewModel;
         }
     }
-    
+
     public function minhasSolicitacoesAction() {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
@@ -306,7 +303,7 @@ class SolicitacaoController extends AbstractController {
             'solicitacoes' => $solicitacoes
         ));
     }
-    
+
     public function pesquisarProtocoloAction() {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
@@ -315,28 +312,164 @@ class SolicitacaoController extends AbstractController {
             $data = $request->getPost();
             $protocolo = $data['protocolo'];
             $solicitacaoModel = new SolicitacaoModel($this->getDbAdapter());
-            $solicitacoes = $solicitacaoModel->searchProtocol($protocolo, $usuarioSessao->pkUsuario);
+            if ((int) $usuarioSessao->perfil == 1) {
+                $solicitacoes = $solicitacaoModel->searchProtocol($protocolo, $usuarioSessao->pkUsuario);
+            } else {
+                $solicitacoes = $solicitacaoModel->searchProtocol($protocolo, null);
+            }
 
             return new ViewModel(array(
                 'solicitacoes' => $solicitacoes,
                 'protocolo' => $protocolo
-            )); 
+            ));
         }
     }
-    
+
     public function visualizarAction() {
+        $auth = new AuthenticationService();
+        $usuarioSessao = $auth->getIdentity();
+        $usuarioPerfil = (int) $usuarioSessao->perfil;
         $protocolo = $this->params()->fromRoute('protocolo');
-        $disciplinas = null;
         $solicitacaoModel = new SolicitacaoModel($this->getDbAdapter());
+        $cursoModel = new CursoModel($this->getDbAdapter());
+        $usuarioModel = new UsuarioModel($this->getDbAdapter());
         $solicitacoes = $solicitacaoModel->findTasksByProtocol($protocolo);
-        if(isset($solicitacoes)) {
+        $encServidores = array();
+
+        //preenchimento das disciplinas (caso existam)
+        $disciplinas = null;
+        if ($solicitacoes) {
             $disciplinas = $solicitacaoModel->findTaskSubjects($solicitacoes['id']);
+            $historico = $solicitacaoModel->findTaskHistory($solicitacoes['id']);
+            //caso a solicitação não exista, retorna a tela anterior
+        } else {
+            if ($usuarioPerfil == 1) {
+                return $this->redirect()->toRoute('solicitacao/minhas-solicitacoes');
+            } else {
+                return $this->redirect()->toRoute('tarefas');
+            }
         }
+
+        //configurando a visualização conforme o nível de acesso do usuário
+        $granted = 0;
+        //caso o usuário seja aluno
+        if ($usuarioPerfil == 1) {
+            $granted = 1;
+            if ($usuarioSessao->pkUsuario != (int) $solicitacoes['fk_usuario']) {
+                return $this->redirect()->toRoute('solicitacao/minhas-solicitacoes');
+            }
+            //caso o usuario seja servidor
+        } else {
+            $idCurso = $cursoModel->findPerfilCurso($usuarioSessao->perfil);
+            $encServidores = $usuarioModel->findListaServidores($usuarioSessao->pkUsuario, $idCurso);
+            if ((int) $solicitacoes['fk_status'] == 1) {
+                $granted = 2; //tarefa disponível para atribuição    
+            } elseif ((int) $solicitacoes['fk_status'] == 2) {
+                $atribuidaUsuario = $solicitacaoModel->findUltimoEncaminhamento($solicitacoes['id']);
+                if ($atribuidaUsuario['servidor'] != $usuarioSessao->pkUsuario) {
+                    $granted = 3; //tarefa está atribuida, porem para outro servidor
+                } else {
+                    $granted = 4; //tarefa atribuida para o servidor logado, permissão total
+                }
+            } elseif ((int) $solicitacoes['fk_status'] == 3) {
+                $atribuidaUsuario = $solicitacaoModel->findLastTaskForward($solicitacoes['id'], null);
+                if ($atribuidaUsuario['novo_servidor'] != $usuarioSessao->pkUsuario) {
+                    $granted = 3; //tarefa está atribuida, porem para outro servidor
+                } else {
+                    $granted = 2; //tarefa atribuida para o servidor logado, permissão total
+                }
+            }
+        }
+
         return new ViewModel(array(
             'solicitacoes' => $solicitacoes,
             'protocolo' => $protocolo,
-            'disciplinas' => $disciplinas
-        )); 
+            'disciplinas' => $disciplinas,
+            'servidores' => $encServidores,
+            'historico' => $historico,
+            'granted' => $granted,
+        ));
     }
-    
+
+    public function atribuirAction() {
+        $auth = new AuthenticationService();
+        $usuarioSessao = $auth->getIdentity();
+        $idUsuario = $usuarioSessao->pkUsuario;
+        //Parametros vindos da requisicao
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $protocolo = $data['protocolo'];
+            $solicitacaoModel = new SolicitacaoModel($this->getDbAdapter());
+            $solicitacoes = $solicitacaoModel->findTasksByProtocol($protocolo);
+            $idAtribuido = $solicitacaoModel->insertAtribuido($solicitacoes['id'], $idUsuario);
+            if ($idAtribuido) {
+                $solicitacaoModel->updateStatusTask($solicitacoes['id'], 2);
+            }
+            $viewModel = new ViewModel();
+            $viewModel->setTerminal(true);
+            return $this->redirect()->toRoute('solicitacao/visualizar', array('protocolo' => $protocolo));
+        }
+    }
+
+    public function cancelarAction() {
+        //Parametros vindos da requisicao
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $protocolo = $data['protocolo'];
+            $solicitacaoModel = new SolicitacaoModel($this->getDbAdapter());
+            $solicitacoes = $solicitacaoModel->findTasksByProtocol($protocolo);
+            $solicitacaoModel->updateStatusTask($solicitacoes['id'], 5);
+            $viewModel = new ViewModel();
+            $viewModel->setTerminal(true);
+            return $this->redirect()->toRoute('solicitacao/visualizar', array('protocolo' => $protocolo));
+        }
+    }
+
+    public function encaminharAction() {
+        $auth = new AuthenticationService();
+        $usuarioSessao = $auth->getIdentity();
+        $idUsuario = $usuarioSessao->pkUsuario;
+        //Parametros vindos da requisicao
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $protocolo = $data['protocolo'];
+            $novoUsuario = $data['newusuario'];
+            $justificativa = $data['justificativa'];
+            $solicitacaoModel = new SolicitacaoModel($this->getDbAdapter());
+            $solicitacoes = $solicitacaoModel->findTasksByProtocol($protocolo);
+            $idEncaminhado = $solicitacaoModel->insertEncaminhado($solicitacoes['id'], $idUsuario, $novoUsuario, $justificativa);
+            if ($idEncaminhado) {
+                $solicitacaoModel->updateStatusTask($solicitacoes['id'], 3);
+            }
+            $viewModel = new ViewModel();
+            $viewModel->setTerminal(true);
+            return $this->redirect()->toRoute('tarefas');
+        }
+    }
+
+    public function encerrarAction() {
+        $auth = new AuthenticationService();
+        $usuarioSessao = $auth->getIdentity();
+        $idUsuario = $usuarioSessao->pkUsuario;
+        //Parametros vindos da requisicao
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $protocolo = $data['protocolo'];
+            $justificativa = $data['justificativa'];
+            $solicitacaoModel = new SolicitacaoModel($this->getDbAdapter());
+            $solicitacoes = $solicitacaoModel->findTasksByProtocol($protocolo);
+            $idEncerrado = $solicitacaoModel->insertEncerrado($solicitacoes['id'], $idUsuario, $justificativa);
+            if ($idEncerrado) {
+                $solicitacaoModel->updateStatusTask($solicitacoes['id'], 4);
+            }
+            $viewModel = new ViewModel();
+            $viewModel->setTerminal(true);
+            return $this->redirect()->toRoute('solicitacao/visualizar', array('protocolo' => $protocolo));
+        }
+    }
+
 }

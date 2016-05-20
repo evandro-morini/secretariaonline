@@ -17,6 +17,7 @@ return array(
             'Secretaria\Controller\Autenticacao' => Controller\AutenticacaoController::class,
             'Secretaria\Controller\Solicitacao' => Controller\SolicitacaoController::class,
             'Secretaria\Controller\Tarefa' => Controller\TarefaController::class,
+            'Secretaria\Controller\Adm' => Controller\AdmController::class,
             'Secretaria\Controller\Crypto' => Controller\CryptoController::class
         )
     ),
