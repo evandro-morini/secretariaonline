@@ -23,6 +23,7 @@ class CursoModel extends AbstractModel {
         $sql = new \Zend\Db\Sql\Sql($this->adapter);
         $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
         $select->where->equalTo('status', 1);
+        $select->order('descricao');
 
         $statement = $sql->prepareStatementForSqlObject($select);
         $resultSet = $statement->execute();

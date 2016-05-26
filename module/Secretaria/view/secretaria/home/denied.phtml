@@ -1,0 +1,21 @@
+<br>
+<div class="col-lg-6 col-md-offset-3">
+    <div class="text-center">
+        <img src="<?php echo $this->basePath('img/denied.png') ?>" alt="">
+    </div>
+    <br>
+    <section class="panel">
+        <header class="panel-heading text-center">
+            <b>ATENÇÃO</b>
+        </header>
+        <div class="panel-body text-center">
+            Você não tem permissão para acessar essa funcionalidade.
+            <br>
+            <?php if ($this->perfil == 1) : ?>
+                <a href="<?php echo $this->url('solicitacao/minhas-solicitacoes');?>">Retornar</a>
+            <?php else : ?>
+                <a href="<?php echo $this->url('tarefas');?>">Retornar</a>
+            <?php endif; ?>
+        </div>
+    </section>
+</div>

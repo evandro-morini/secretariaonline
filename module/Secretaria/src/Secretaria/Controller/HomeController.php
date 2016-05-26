@@ -181,5 +181,14 @@ class HomeController extends AbstractController {
             'matricula' => $matricula
         ));
     }
+    
+    public function deniedAction() {
+        $auth = new AuthenticationService();
+        $usuarioSessao = $auth->getIdentity();
+        $this->layout()->setTemplate('layout/layout-no-session');
+        return new ViewModel(array(
+            'perfil' => $usuarioSessao->perfil
+        ));
+    }
 
 }

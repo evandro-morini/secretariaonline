@@ -193,5 +193,23 @@ EOT;
         $statement = $this->adapter->query($sql);
         return $statement->execute();
     }
+    
+    public function findUsuarios() {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $select->order('nome');
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute();
+
+        $className = '\\Secretaria\\Model\\Entity\\Usuario';
+
+        $entities = array();
+        foreach ($resultSet as $row) {
+            $entity = new $className($row);
+            $entities[] = $entity;
+        }
+        return $entities;
+    }
 
 }

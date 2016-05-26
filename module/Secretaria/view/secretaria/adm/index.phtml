@@ -1,113 +1,184 @@
+<div class="col-lg-6" style="margin-bottom: 20px;">
+    <h3>Cadastrar</h3>
+    <a class="btn btn-info" href="#servidor" data-toggle="modal"> Servidor </a>
+    <a class="btn btn-info" href="#curso" data-toggle="modal"> Curso </a>
+    <a class="btn btn-info" href="#disciplina" data-toggle="modal"> Disciplina </a>
+    <a class="btn btn-info" href="#professor" data-toggle="modal"> Professor </a>  
+</div>
 <div class="col-lg-12">
     <section class="panel general">
         <header class="panel-heading tab-bg-dark-navy-blue">
             <ul class="nav nav-tabs">
                 <li class="active">
-                    <a data-toggle="tab" href="#usuarios">Usuários</a>
+                    <a data-toggle="tab" href="#usuarios">Gerenciar Usuários</a>
                 </li>
                 <li class="">
-                    <a data-toggle="tab" href="#cursos">Cursos</a>
+                    <a data-toggle="tab" href="#cursos">Gerenciar Cursos</a>
                 </li>
                 <li class="">
-                    <a data-toggle="tab" href="#disciplinas">Disciplinas</a>
+                    <a data-toggle="tab" href="#disciplinas">Gerenciar Disciplinas</a>
                 </li>
                 <li class="">
-                    <a data-toggle="tab" href="#professores">Professores</a>
+                    <a data-toggle="tab" href="#professores">Gerenciar Professores</a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#relatorios">Relatórios</a>
                 </li>
             </ul>
         </header>
         <div class="tab-content">
             <div id="usuarios" class="tab-pane active">
-                <table class="table table-hover">
-                    <tbody>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Matrícula</th>
-                            <th>Curso</th>
-                            <th>Perfil</th>
-                            <th></th>
-                        </tr>
-                        <tr>
-                            <td>Evandro Morini Silva</td>
-                            <td>GRR20121401</td>
-                            <td>Tecnologia em Análise e Desenvolvimento de Sistemas</td>
-                            <td>Aluno</td>
-                            <td>
-                                <a class="btn btn-success" href="#encaminhar" data-toggle="modal"> Visualizar </a>
-                                <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
-                                <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <?php if (empty($this->usuarios)) : ?>
+                    Não existem usuários cadastrados no momento.
+                <?php else : ?>
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>CPF</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Perfil</th>
+                                <th></th>
+                            </tr>
+                            <?php foreach ($this->usuarios as $usuario) : ?>
+                                <tr>
+                                    <td><?php echo $usuario->getCpf(); ?></td>
+                                    <td><?php echo $usuario->getNome(); ?></td>
+                                    <td><?php echo $usuario->getEmail(); ?></td>
+                                    <td>
+                                        <?php
+                                        if ($usuario->getFkPerfil() == 1) {
+                                            echo 'Aluno';
+                                        } else {
+                                            echo 'Servidor';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
+                                        <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
             <div id="cursos" class="tab-pane">
-                <table class="table table-hover">
-                    <tbody>
-                        <tr>
-                            <th>Código</th>
-                            <th>Descrição</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                        <tr>
-                            <td>48A</td>
-                            <td>Tecnologia em Análise e Desenvolvimento de Sistemas</td>
-                            <td>Ativo</td>
-                            <td>
-                                <a class="btn btn-success" href="#encaminhar" data-toggle="modal"> Visualizar </a>
-                                <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
-                                <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <?php if (empty($this->cursos)) : ?>
+                    Não existem cursos cadastrados no momento.
+                <?php else : ?>
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descrição</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                            <?php foreach ($this->cursos as $curso) : ?>
+                                <tr>
+                                    <td><?php echo $curso->getCod(); ?></td>
+                                    <td><?php echo $curso->getDescricao(); ?></td>
+                                    <td>
+                                        <?php
+                                        if ($curso->getStatus() == 1) {
+                                            echo 'Ativo';
+                                        } else {
+                                            echo 'Inativo';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
+                                        <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
             <div id="disciplinas" class="tab-pane">
-                <table class="table table-hover">
-                    <tbody>
-                        <tr>
-                            <th>Código</th>
-                            <th>Descrição</th>
-                            <th>Curso</th>
-                            <th>Professor</th>
-                            <th></th>
-                        </tr>
-                        <tr>
-                            <td>TI027</td>
-                            <td>Prática de Algoritmos</td>
-                            <td>Tecnologia em Análise e Desenvolvimento de Sistemas</td>
-                            <td>Luiz Antonio Pereira Neves</td>
-                            <td>
-                                <a class="btn btn-success" href="#encaminhar" data-toggle="modal"> Visualizar </a>
-                                <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
-                                <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <?php if (empty($this->disciplinas)) : ?>
+                    Não existem cursos cadastrados no momento.
+                <?php else : ?>
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descrição</th>
+                                <th>Curso</th>
+                                <th>Professor</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                            <?php foreach ($this->disciplinas as $disciplina) : ?>
+                                <tr>
+                                    <td><?php echo $disciplina['cod_disciplina']; ?></td>
+                                    <td><?php echo $disciplina['desc_disciplina']; ?></td>
+                                    <td><?php echo $disciplina['cod_curso'] . ' ' . $disciplina['desc_curso']; ?></td>
+                                    <td><?php echo $disciplina['nome']; ?></td>
+                                    <td>
+                                        <?php
+                                        if ($disciplina['status'] == 1) {
+                                            echo 'Ativo';
+                                        } else {
+                                            echo 'Inativo';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
+                                        <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
             <div id="professores" class="tab-pane">
-                <table class="table table-hover">
-                    <tbody>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                        <tr>
-                            <td>Luiz Antonio Pereira Neves</td>
-                            <td>lapneves@gmail.com</td>
-                            <td>Ativo</td>
-                            <td>
-                                <a class="btn btn-success" href="#encaminhar" data-toggle="modal"> Visualizar </a>
-                                <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
-                                <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <?php if (empty($this->professores)) : ?>
+                    Não existem professores cadastrados no momento.
+                <?php else : ?>
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                            <?php foreach ($this->professores as $professor) : ?>
+                                <tr>
+                                    <td><?php echo $professor->getNome(); ?></td>
+                                    <td><?php echo $professor->getEmail(); ?></td>
+                                    <td>
+                                        <?php
+                                        if ($professor->getStatus() == 1) {
+                                            echo 'Ativo';
+                                        } else {
+                                            echo 'Inativo';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
+                                        <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+            <div id="relatorios" class="tab-pane">
+                <div class="list-group">
+                    <a href="#" class="list-group-item">Tarefas em atraso</a>
+                    <a href="#" class="list-group-item">Tarefas mais retornadas</a>
+                    <a href="#" class="list-group-item">Tarefas fechadas por servidor</a>
+                </div>
             </div>
         </div>
     </section>

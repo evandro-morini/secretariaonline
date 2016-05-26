@@ -23,6 +23,7 @@ class DisciplinaModel extends AbstractModel {
         $sql = new \Zend\Db\Sql\Sql($this->adapter);
         $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
         $select->where->equalTo('status', 1);
+        $select->order('descricao');
 
         $statement = $sql->prepareStatementForSqlObject($select);
         $resultSet = $statement->execute();
@@ -35,6 +36,26 @@ class DisciplinaModel extends AbstractModel {
             $entities[] = $entity;
         }
         return $entities;
+    }
+    
+    public function findFkDisciplinas() {
+        $sql = <<<EOT
+            SELECT
+                disc.cod AS cod_disciplina,
+                disc.descricao AS desc_disciplina,
+                disc.status,
+                curso.cod AS cod_curso,
+                curso.descricao AS desc_curso,
+                prof.nome
+            FROM
+                tb_disciplina AS disc
+            JOIN 
+                tb_curso AS curso ON curso.id = disc.fk_curso
+            JOIN 
+                tb_professor AS prof ON prof.id = disc.fk_professor
+EOT;
+        $statement = $this->adapter->query($sql);
+        return $statement->execute();
     }
     
     public function findTipoDisciplinas() {

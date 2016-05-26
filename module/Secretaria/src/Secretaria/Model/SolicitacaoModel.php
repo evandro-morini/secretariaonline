@@ -244,7 +244,7 @@ EOT;
         );
         $insert->values($newData);
         $statement = $sql->prepareStatementForSqlObject($insert);
-        $resultSet = $statement->execute();sleep(1);
+        $resultSet = $statement->execute();
         return $resultSet->getGeneratedValue();
     }
     

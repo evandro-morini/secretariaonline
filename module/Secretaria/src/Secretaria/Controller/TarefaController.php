@@ -51,8 +51,7 @@ class TarefaController extends AbstractController {
                 'canceladas' => $canceladas
             ));
         } else {
-            $this->flashMessenger()->addErrorMessage('Usuário sem acesso a esta funcionalidade.');
-            return $this->redirect()->toRoute('logout');
+            return $this->redirect()->toRoute('home/denied');
         }
     }
 

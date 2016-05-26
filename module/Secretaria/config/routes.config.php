@@ -40,6 +40,15 @@ return array(
                     )
                 )
             ),
+            'denied' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => 'denied',
+                    'defaults' => array(
+                        'action' => 'denied'
+                    )
+                )
+            ),
         )
     ),
     'autenticacao' => array(
