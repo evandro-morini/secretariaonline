@@ -1,75 +1,79 @@
-<?php
-$form->setAttribute('action', $this->url('home/editar-usuario'))
-        ->setAttribute('class', 'form-horizontal text-center');
-$form->prepare();
-?>
-<div class="col-lg-10">
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#telinput").inputmask('(99) 9999-9999');
+    });
+</script>
+
+<div class="col-lg-8">
     <section class="panel">
         <header class="panel-heading text-center">
-            Meus dados
+            Meus Dados
         </header>
         <div class="panel-body">
-            <?php echo $this->form()->openTag($form); ?>
             <div class="form-group col-lg-14 text-center">
                 <?php echo $this->flashMessenger()->render('error', array('alert alert-block alert-danger')); ?>
                 <?php echo $this->flashMessenger()->render('info', array('alert alert-info')); ?>
                 <?php echo $this->flashMessenger()->render('success', array('alert alert-success')); ?>
             </div>
-            <div class="form-group">
-                <label class="col-lg-4 col-sm-2 control-label"><?php echo $form->get('cpf')->getLabel(); ?></label>
-                <div class="col-lg-6">
-                    <?php echo $this->formInput($form->get('cpf')->setValue($this->usuario->getCpf())); ?>
+            <form name="editarUsuario" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('home/editar-usuario'); ?>">
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">CPF </label>
+                    <div class="col-lg-8">
+                        <input id="cpfinput" class="form-control" type="text" value="<?php echo $this->usuario->getCpf(); ?>" maxlength="11" required="required" placeholder="Insira o CPF" name="cpf" readonly>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-4 col-sm-2 control-label"><?php echo $form->get('nome')->getLabel(); ?></label>
-                <div class="col-lg-6">
-                    <?php echo $this->formInput($form->get('nome')->setValue($this->usuario->getNome())); ?>
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Nome </label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value="<?php echo $this->usuario->getNome(); ?>" maxlength="255" required="required" placeholder="Nome Completo" name="nome">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-4 col-sm-2 control-label"><?php echo $form->get('matricula')->getLabel(); ?></label>
-                <div class="col-lg-6">
-                    <?php echo $this->formInput($form->get('matricula')->setValue($this->matricula)); ?>
+
+                <?php if ($this->usuario->getFkPerfil() == 1) : ?>
+                    <div class="form-group">
+                        <label class="col-lg-2 col-sm-2 control-label">Matrícula</label>
+                        <div class="col-lg-8">
+                            <input class="form-control" type="text" value="<?php echo $this->matricula; ?>" maxlength="11" required="required" placeholder="GRRXXXXXXXX" name="matricula" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Curso </label>
+                        <div class="col-lg-8">
+                            <select class="form-control" required="required" name="curso">
+                                <?php foreach ($this->cursosUsuario as $curso) : ?>
+                                        <option value="<?php echo $curso->getId(); ?>" <?php if($curso->getId() == $this->idCurso){ echo 'selected'; } ?>><?php echo $curso->getDescricao(); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Telefone </label>
+                    <div class="col-lg-8">
+                        <input id="telinput" class="form-control" type="text" value="<?php echo $this->usuario->getTelefone(); ?>" maxlength="15" placeholder="(DDD)XXXX-XXXX" name="telefone">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-4 col-sm-2 control-label"><?php echo $form->get('curso')->getLabel(); ?></label>
-                <div class="col-lg-6">
-                    <?php echo $this->formSelect($form->get('curso')); ?>
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Email </label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value="<?php echo $this->usuario->getEmail(); ?>" required="required" placeholder="usuario@dominio.com" name="email">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-4 col-sm-2 control-label"><?php echo $form->get('dta_nasc')->getLabel(); ?></label>
-                <div class="col-lg-6">
-                    <?php echo $this->formInput($form->get('dta_nasc')->setValue($this->usuario->getDtaNasc())); ?>
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Senha </label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="password" value="" placeholder="Preencha apenas em caso de troca de senha" name="password">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-4 col-sm-2 control-label"><?php echo $form->get('email')->getLabel(); ?></label>
-                <div class="col-lg-6">
-                    <?php echo $this->formInput($form->get('email')->setValue($this->usuario->getEmail())); ?>
+                <div class="form-group">
+                    <div class="text-center">
+                        <input type="reset" id="resetbutton" class="btn btn-warning" value="Limpar">
+                        <input class="btn btn-success" type="submit" value="Salvar Alterações">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-4 col-sm-2 control-label"><?php echo $form->get('password')->getLabel(); ?></label>
-                <div class="col-lg-6">
-                    <?php echo $this->formInput($form->get('password')); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-4 col-sm-2 control-label"><?php echo $form->get('password_repeat')->getLabel(); ?></label>
-                <div class="col-lg-6">
-                    <?php echo $this->formInput($form->get('password_repeat')); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-lg-offset-2 col-lg-8">
-                    <?php echo $this->formRow($form->get('submit')); ?>
-                    <input type="reset" id="resetbutton" class="btn btn-warning" value="Limpar">
-                </div>
-            </div>
-            <?php echo $this->form()->closeTag(); ?>
+                <p class="text-center"><a href="<?php echo $this->url('adm');?>">Voltar</a></p>
+            </form>
         </div>
     </section>
 </div>

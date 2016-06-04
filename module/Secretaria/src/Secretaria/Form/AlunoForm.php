@@ -76,15 +76,16 @@ class AlunoForm extends Form {
             ),
         ));
         $this->add(array(
-            'name' => 'dta_nasc',
+            'name' => 'telefone',
             'type' => 'text',
             'options' => array(
-                'label' => 'Data Nasc.',
+                'label' => 'Telefone',
             ),
             'attributes' => array(
                 'class' => 'form-control',
-                'id' => 'dateinput',
-                'placeholder' => 'dd/mm/aaaa'
+                'id' => 'telinput',
+                'placeholder' => '(DDD)XXXX-XXXX',
+                'maxlength' => 15
             ),
         ));
         $this->add(array(

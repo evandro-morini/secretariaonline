@@ -1,3 +1,8 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#telinput").inputmask('(99) 9999-9999');
+    });
+</script>
 <?php
 $form->setAttribute('action', $this->url('home/novo-usuario'))
         ->setAttribute('class', 'form-horizontal text-center');
@@ -21,7 +26,7 @@ $form->prepare();
             <div class="form-group">
                 <label class="col-lg-2 col-sm-2 control-label"><?php echo $form->get('cpf')->getLabel(); ?></label>
                 <div class="col-lg-10">
-                    <?php echo $this->formInput($form->get('cpf')); ?>
+                    <?php echo $this->formInput($form->get('cpf')->setAttribute('onblur', 'validaCPF()')); ?>
                 </div>
             </div>
             <div class="form-group">
@@ -43,9 +48,9 @@ $form->prepare();
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-lg-2 col-sm-2 control-label"><?php echo $form->get('dta_nasc')->getLabel(); ?></label>
+                <label class="col-lg-2 col-sm-2 control-label"><?php echo $form->get('telefone')->getLabel(); ?></label>
                 <div class="col-lg-10">
-                    <?php echo $this->formInput($form->get('dta_nasc')); ?>
+                    <?php echo $this->formInput($form->get('telefone')); ?>
                 </div>
             </div>
             <div class="form-group">

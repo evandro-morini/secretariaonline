@@ -8,7 +8,7 @@ class Usuario extends AbstractEntity
     protected $cpf;
     protected $matricula;
     protected $nome;
-    protected $dtaNasc;
+    protected $telefone;
     protected $email;
     protected $pwd;
     protected $fkPerfil;
@@ -29,10 +29,6 @@ class Usuario extends AbstractEntity
 
     function getNome() {
         return $this->nome;
-    }
-
-    function getDtaNasc() {
-        return $this->dtaNasc;
     }
 
     function getEmail() {
@@ -71,10 +67,6 @@ class Usuario extends AbstractEntity
         $this->nome = $nome;
     }
 
-    function setDtaNasc($dtaNasc) {
-        $this->dtaNasc = $dtaNasc;
-    }
-
     function setEmail($email) {
         $this->email = $email;
     }
@@ -94,4 +86,13 @@ class Usuario extends AbstractEntity
     function setStatus($status) {
         $this->status = $status;
     }
+    
+    function getTelefone() {
+        return $this->telefone;
+    }
+
+    function setTelefone($telefone) {
+        $this->telefone = $telefone;
+    }
+
 }

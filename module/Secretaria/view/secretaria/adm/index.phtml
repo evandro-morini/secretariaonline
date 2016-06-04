@@ -1,6 +1,12 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#telinput").inputmask('(99) 9999-9999');
+    });
+</script>
 <div class="col-lg-6" style="margin-bottom: 20px;">
     <h3>Cadastrar</h3>
     <a class="btn btn-info" href="#servidor" data-toggle="modal"> Servidor </a>
+    <a class="btn btn-info" href="#perfil" data-toggle="modal"> Perfil </a>
     <a class="btn btn-info" href="#curso" data-toggle="modal"> Curso </a>
     <a class="btn btn-info" href="#disciplina" data-toggle="modal"> Disciplina </a>
     <a class="btn btn-info" href="#professor" data-toggle="modal"> Professor </a>  
@@ -13,6 +19,9 @@
                     <a data-toggle="tab" href="#usuarios">Gerenciar Usuários</a>
                 </li>
                 <li class="">
+                    <a data-toggle="tab" href="#perfis">Gerenciar Perfis</a>
+                </li>
+                <li class="">
                     <a data-toggle="tab" href="#cursos">Gerenciar Cursos</a>
                 </li>
                 <li class="">
@@ -20,9 +29,6 @@
                 </li>
                 <li class="">
                     <a data-toggle="tab" href="#professores">Gerenciar Professores</a>
-                </li>
-                <li class="">
-                    <a data-toggle="tab" href="#relatorios">Relatórios</a>
                 </li>
             </ul>
         </header>
@@ -36,18 +42,22 @@
                             <tr>
                                 <th>CPF</th>
                                 <th>Nome</th>
+                                <th>Telefone</th>
                                 <th>Email</th>
                                 <th>Perfil</th>
+                                <th>Curso</th>
+                                <th>Status</th>
                                 <th></th>
                             </tr>
                             <?php foreach ($this->usuarios as $usuario) : ?>
                                 <tr>
-                                    <td><?php echo $usuario->getCpf(); ?></td>
-                                    <td><?php echo $usuario->getNome(); ?></td>
-                                    <td><?php echo $usuario->getEmail(); ?></td>
+                                    <td><?php echo $usuario['cpf']; ?></td>
+                                    <td><?php echo $usuario['nome']; ?></td>
+                                    <td><?php echo $usuario['telefone']; ?></td>
+                                    <td><?php echo $usuario['email']; ?></td>
                                     <td>
                                         <?php
-                                        if ($usuario->getFkPerfil() == 1) {
+                                        if ($usuario['fk_perfil'] == 1) {
                                             echo 'Aluno';
                                         } else {
                                             echo 'Servidor';
@@ -55,10 +65,117 @@
                                         ?>
                                     </td>
                                     <td>
-                                        <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
-                                        <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
+                                        <?php
+                                        if (is_null($usuario['curso_aluno'])) {
+                                            echo $usuario['curso_servidor'];
+                                        } else {
+                                            echo $usuario['curso_aluno'];
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        if ($usuario['status'] == 1) {
+                                            echo 'Ativo';
+                                        } else {
+                                            echo 'Inativo';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($usuario['status'] == 1) : ?>
+                                                <button class="btn btn-info" onclick="editarUsuario(<?php echo $usuario['id']; ?>)"> Editar </button>
+                                                <a class="btn btn-warning" href="<?php echo '#alterarStatusUsuario' . $usuario['id']; ?>" data-toggle="modal"> Inativar </a>
+                                            <?php else : ?>
+                                                <a class="btn btn-success" href="<?php echo '#alterarStatusUsuario' . $usuario['id']; ?>" data-toggle="modal"> Ativar </a>
+                                            <?php endif; ?>
                                     </td>
                                 </tr>
+                                <div class="modal fade" id="<?php echo 'alterarStatusUsuario' . $usuario['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form name="excluirUsuario" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/alterar-status-usuario', array('id' => $usuario['id'])); ?>">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                    <h4 class="modal-title">Alterar Status de Usuário</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="text">Tem certeza que deseja alterar o status do usuário <?php echo $usuario['nome']; ?> ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                                                    <input class="btn btn-warning" type="submit" value="Alterar">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+            <div id="perfis" class="tab-pane">
+                <?php if (empty($this->perfis)) : ?>
+                    Não existem perfis cadastrados no momento.
+                <?php else : ?>
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Curso</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                            <?php foreach ($this->perfis as $perfil) : ?>
+                                <tr>
+                                    <td><?php echo $perfil['desc_perfil']; ?></td>
+                                    <td>
+                                        <?php
+                                        if (is_null($perfil['desc_curso'])) {
+                                            echo ' - ';
+                                        } else {
+                                            echo $perfil['desc_curso'];
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        if ($perfil['status'] == 1) {
+                                            echo 'Ativo';
+                                        } else {
+                                            echo 'Inativo';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($perfil['status'] == 1) : ?>
+                                                <button class="btn btn-info" onclick="editarPerfil(<?php echo $perfil['id']; ?>)"> Editar </button>
+                                                <a class="btn btn-warning" href="<?php echo '#alterarStatusPerfil' . $perfil['id']; ?>" data-toggle="modal"> Inativar </a>
+                                        <?php else : ?>
+                                            <a class="btn btn-success" href="<?php echo '#alterarStatusPerfil' . $perfil['id']; ?>" data-toggle="modal"> Ativar </a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <div class="modal fade" id="<?php echo 'alterarStatusPerfil' . $perfil['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form name="excluirPerfil" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/alterar-status-perfil', array('id' => $perfil['id'])); ?>">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                    <h4 class="modal-title">Alterar Status de Perfil</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="text">Tem certeza que deseja alterar o status do perfil <?php echo $perfil['desc_perfil']; ?> ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                                                    <input class="btn btn-warning" type="submit" value="Alterar">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -90,10 +207,33 @@
                                         ?>
                                     </td>
                                     <td>
-                                        <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
-                                        <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
+                                        <?php if ($curso->getStatus() == 1) : ?>
+                                                <button class="btn btn-info" onclick="editarCurso(<?php echo $curso->getId(); ?>)"> Editar </button>
+                                                <a class="btn btn-warning" href="<?php echo '#alterarStatusCurso' . $curso->getId(); ?>" data-toggle="modal"> Inativar </a>
+                                        <?php else : ?>
+                                            <a class="btn btn-success" href="<?php echo '#alterarStatusCurso' . $curso->getId(); ?>" data-toggle="modal"> Ativar </a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
+                                <div class="modal fade" id="<?php echo 'alterarStatusCurso' . $curso->getId(); ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form name="excluirCurso" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/alterar-status-curso', array('id' => $curso->getId())); ?>">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                    <h4 class="modal-title">Alterar Status do Curso</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="text">Tem certeza que deseja alterar o status do curso <?php echo $curso->getDescricao(); ?> ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                                                    <input class="btn btn-warning" type="submit" value="Alterar">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -129,10 +269,33 @@
                                         ?>
                                     </td>
                                     <td>
-                                        <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
-                                        <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
+                                        <?php if ($disciplina['status'] == 1) : ?>
+                                                <button class="btn btn-info" onclick="editarDisciplina(<?php echo $disciplina['id']; ?>)"> Editar </button>
+                                                <a class="btn btn-warning" href="<?php echo '#alterarStatusDisciplina' . $disciplina['id']; ?>" data-toggle="modal"> Inativar </a>
+                                        <?php else : ?>
+                                            <a class="btn btn-success" href="<?php echo '#alterarStatusDisciplina' . $disciplina['id']; ?>" data-toggle="modal"> Ativar </a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
+                                <div class="modal fade" id="<?php echo 'alterarStatusDisciplina' . $disciplina['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form name="excluirCurso" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/alterar-status-disciplina', array('id' => $disciplina['id'])); ?>">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                    <h4 class="modal-title">Alterar Status da Disciplina</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="text">Tem certeza que deseja alterar o status da disciplina <?php echo $disciplina['desc_disciplina']; ?> ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                                                    <input class="btn btn-warning" type="submit" value="Alterar">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -164,22 +327,252 @@
                                         ?>
                                     </td>
                                     <td>
-                                        <a class="btn btn-warning" href="#encaminhar" data-toggle="modal"> Editar </a>
-                                        <a class="btn btn-danger" href="#encaminhar" data-toggle="modal"> Excluir </a>
+                                        <?php if ($professor->getStatus() == 1) : ?>
+                                                <button class="btn btn-info" onclick="editarProfessor(<?php echo $professor->getId(); ?>)"> Editar </button>
+                                                <a class="btn btn-warning" href="<?php echo '#alterarStatusProf' . $professor->getId(); ?>" data-toggle="modal"> Inativar </a>
+                                        <?php else : ?>
+                                            <a class="btn btn-success" href="<?php echo '#alterarStatusProf' . $professor->getId(); ?>" data-toggle="modal"> Ativar </a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
+                                <div class="modal fade" id="<?php echo 'alterarStatusProf' . $professor->getId(); ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form name="excluirProfessor" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/alterar-status-professor', array('id' => $professor->getId())); ?>">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                    <h4 class="modal-title">Alterar Status do Professor</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="text">Tem certeza que deseja alterar o status do professor <?php echo $professor->getNome(); ?> ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                                                    <input class="btn btn-warning" type="submit" value="Alterar">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 <?php endif; ?>
             </div>
-            <div id="relatorios" class="tab-pane">
-                <div class="list-group">
-                    <a href="#" class="list-group-item">Tarefas em atraso</a>
-                    <a href="#" class="list-group-item">Tarefas mais retornadas</a>
-                    <a href="#" class="list-group-item">Tarefas fechadas por servidor</a>
-                </div>
-            </div>
         </div>
     </section>
+</div>
+<div class="modal fade" id="servidor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form name="cadastrarServidor" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/novo-servidor'); ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Novo Servidor</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">CPF </label>
+                        <div class="col-lg-10">
+                            <input id="cpfinput" class="form-control" type="text" value="" maxlength="11" onblur="validaCPF()" required="required" placeholder="Insira o CPF" name="cpf">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Nome </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" maxlength="255" required="required" placeholder="Nome Completo" name="nome">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Perfil </label>
+                        <div class="col-lg-10">
+                            <select class="form-control" required="required" name="perfil">
+                                <option value="">Selecione o perfil do servidor</option>
+                                <?php foreach ($this->perfisUsuario as $perfil) : ?>
+                                    <?php if ($perfil['id'] != 1) : ?>
+                                        <option value="<?php echo $perfil['id']; ?>"><?php echo $perfil['desc_perfil'] . ' - ' . $perfil['desc_curso']; ?></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Telefone </label>
+                        <div class="col-lg-10">
+                            <input id="telinput" class="form-control" type="text" value="" maxlength="15" placeholder="(DDD)XXXX-XXXX" name="telefone">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Email </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" required="required" placeholder="usuario@dominio.com" name="email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Senha </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="password" value="" required="required" placeholder="********" name="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="adm"> Administrador
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-success" type="submit" value="Cadastrar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="perfil" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form name="cadastrarPerfil" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/novo-perfil'); ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Novo Perfil</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Descrição </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" maxlength="255" required="required" placeholder="Nome do Perfil" name="descricao">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Curso </label>
+                        <div class="col-lg-10">
+                            <select class="form-control" required="required" name="curso">
+                                <?php foreach ($this->cursosPerfil as $curso) : ?>
+                                    <option value="<?php echo $curso->getId(); ?>"><?php echo $curso->getDescricao(); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-success" type="submit" value="Cadastrar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="curso" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form name="cadastrarCurso" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/novo-curso'); ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Novo Curso</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Código </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" maxlength="45" required="required" placeholder="Código referente ao curso" name="cod">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Descrição </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" maxlength="255" required="required" placeholder="Nome do curso" name="descricao">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-success" type="submit" value="Cadastrar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="professor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form name="cadastrarProfessor" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/novo-professor'); ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Novo Professor</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Nome </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" maxlength="255" required="required" placeholder="Insira o nome do professor" name="nome">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Email </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" required="required" placeholder="usuario@dominio.com" name="email">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-success" type="submit" value="Cadastrar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="disciplina" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form name="cadastrarDisciplina" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/nova-disciplina'); ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Nova Disciplina</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Código </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" maxlength="45" required="required" placeholder="Código referente a disciplina" name="cod">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Descrição </label>
+                        <div class="col-lg-10">
+                            <input class="form-control" type="text" value="" maxlength="255" required="required" placeholder="Nome da disciplina" name="descricao">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Professor </label>
+                        <div class="col-lg-10">
+                            <select class="form-control" required="required" name="professor">
+                                <?php foreach ($this->professoresDisciplina as $professor) : ?>
+                                    <option value="<?php echo $professor->getId(); ?>"><?php echo $professor->getNome(); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-lg-2 col-sm-2 control-label">Curso </label>
+                        <div class="col-lg-10">
+                            <select class="form-control" required="required" name="curso">
+                                <?php foreach ($this->cursosDisciplina as $curso) : ?>
+                                    <option value="<?php echo $curso->getId(); ?>"><?php echo $curso->getDescricao(); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Fechar</button>
+                    <input class="btn btn-success" type="submit" value="Cadastrar">
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

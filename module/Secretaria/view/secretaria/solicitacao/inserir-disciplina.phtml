@@ -3,14 +3,14 @@
         <label  class="col-lg-2 col-sm-2 control-label">
             Disciplina <?php echo $this->count; ?>
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <select class="form-control tipo" name="tipo<?php echo $this->count; ?>" required>
                 <option value="">Selecione o Tipo</option>
                 <option value="2">Incluir</option>
                 <option value="3">Excluir</option>
             </select>
         </div>    
-        <div class="col-lg-8">
+        <div class="col-lg-5">
             <select class="form-control disciplina" name="disciplina<?php echo $this->count; ?>" required>
                 <option value="">Selecione a disciplina</option>
                 <?php foreach($this->disciplinas as $disciplina) : ?>
@@ -24,7 +24,7 @@
         <label  class="col-lg-2 col-sm-2 control-label">
             Disciplina <?php echo $this->count; ?>
         </label>
-        <div class="col-lg-10">
+        <div class="col-lg-8">
             <select class="form-control disciplina" name="disciplina<?php echo $this->count; ?>" required>
                 <option value="">Selecione a disciplina</option>
                 <?php foreach($this->disciplinas as $disciplina) : ?>

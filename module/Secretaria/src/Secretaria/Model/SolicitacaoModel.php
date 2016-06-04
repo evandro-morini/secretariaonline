@@ -132,7 +132,10 @@ EOT;
         $sql = <<<EOT
             SELECT
                 solic.id,
+                solic.fk_tipo_solicitacao as id_tipo,
                 usuario.nome,
+                usuario.email,
+                usuario.telefone,
                 solic.fk_usuario,
                 curso.descricao as nome_curso,
                 uscurso.matricula,
@@ -428,6 +431,23 @@ EOT;
 EOT;
         $statement = $this->adapter->query($sql);
         return $statement->execute();
+    }
+    
+    public function findTOpenTasks($fkUsuario, $fkTipoSolicitacao) {
+        $sql = <<<EOT
+            SELECT
+                COUNT(*)
+            FROM
+                tb_solicitacao
+            WHERE
+                fk_usuario = $fkUsuario
+            AND 
+                fk_tipo_solicitacao = $fkTipoSolicitacao
+            AND 
+                fk_status IN (1, 2, 3)
+EOT;
+        $statement = $this->adapter->query($sql);
+        return (int)$statement->execute()->current()['COUNT(*)'];
     }
 
 }

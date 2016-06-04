@@ -8,8 +8,8 @@
                 <div class="pull-left">
                     <p class="text"><strong>Tipo de solicitação: </strong><?php echo $this->solicitacoes['tipo']; ?></p>
                     <p class="text"><strong>Nome: </strong><?php echo $this->solicitacoes['nome']; ?></p>
+                    <p class="text"><strong>Telefone: </strong><?php echo $this->solicitacoes['telefone']; ?></p>
                     <p class="text"><strong>Curso: </strong><?php echo $this->solicitacoes['nome_curso']; ?></p>
-                    <p class="text"><strong>Matrícula: </strong><?php echo $this->solicitacoes['matricula']; ?></p>
                 </div>
                 <div class="pull-right">
                     <p class="text"><strong>Data de abertura: </strong><?php echo $this->solicitacoes['data_exibir']; ?></p>
@@ -22,6 +22,7 @@
                         }
                         ?>
                     </p>
+                    <p class="text"><strong>Matrícula: </strong><?php echo $this->solicitacoes['matricula']; ?></p>
                     <p class="text"><strong>Status da Solicitação: </strong> 
                         <?php
                         switch ((int) $this->solicitacoes['fk_status']) {
@@ -90,9 +91,11 @@
                 <?php endforeach; ?>
             <?php endif; ?>
             <!-- FIM HISTÓRICO DA SOLICITAÇÃO-->
-            
-            <?php if ($this->granted == 1 && !in_array($this->solicitacoes['fk_status'], array(4, 5))) : ?>
-                <a class="btn btn-danger pull-right" href="#cancelar" data-toggle="modal"> Cancelar Solicitação </a>
+
+            <?php if ($this->granted == 1 && $this->solicitacoes['fk_status'] == 1) : ?>
+                <div class="pull-right">
+                    <a class="btn btn-danger" href="#cancelar" data-toggle="modal"> Cancelar Solicitação </a>
+                </div>
             <?php endif; ?>
 
             <?php if ($this->granted == 2) : ?>

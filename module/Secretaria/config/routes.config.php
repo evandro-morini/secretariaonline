@@ -1,4 +1,5 @@
 <?php
+
 return array(
     'home' => array(
         'type' => 'Literal',
@@ -229,6 +230,153 @@ return array(
                 'action' => 'index'
             )
         ),
-        'may_terminate' => true
+        'may_terminate' => true,
+        'child_routes' => array(
+            'novo-servidor' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/novo-servidor',
+                    'defaults' => array(
+                        'action' => 'novoServidor'
+                    )
+                )
+            ),
+            'novo-perfil' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/novo-perfil',
+                    'defaults' => array(
+                        'action' => 'novoPerfil'
+                    )
+                )
+            ),
+            'novo-curso' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/novo-curso',
+                    'defaults' => array(
+                        'action' => 'novoCurso'
+                    )
+                )
+            ),
+            'nova-disciplina' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/nova-disciplina',
+                    'defaults' => array(
+                        'action' => 'novaDisciplina'
+                    )
+                )
+            ),
+            'novo-professor' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/novo-professor',
+                    'defaults' => array(
+                        'action' => 'novoProfessor'
+                    )
+                )
+            ),
+            'editar-usuario' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/editar-usuario[/:id]',
+                    'defaults' => array(
+                        'action' => 'editarUsuario',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'editar-perfil' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/editar-perfil[/:id]',
+                    'defaults' => array(
+                        'action' => 'editarPerfil',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'editar-curso' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/editar-curso[/:id]',
+                    'defaults' => array(
+                        'action' => 'editarCurso',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'editar-disciplina' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/editar-disciplina[/:id]',
+                    'defaults' => array(
+                        'action' => 'editarDisciplina',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'editar-professor' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/editar-professor[/:id]',
+                    'defaults' => array(
+                        'action' => 'editarProfessor',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'alterar-status-usuario' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/inativar-usuario[/:id]',
+                    'defaults' => array(
+                        'action' => 'alterarStatusUsuario',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'alterar-status-perfil' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/inativar-perfil[/:id]',
+                    'defaults' => array(
+                        'action' => 'alterarStatusPerfil',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'alterar-status-curso' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/inativar-curso[/:id]',
+                    'defaults' => array(
+                        'action' => 'alterarStatusCurso',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'alterar-status-disciplina' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/inativar-disciplina[/:id]',
+                    'defaults' => array(
+                        'action' => 'alterarStatusDisciplina',
+                        'id' => '0'
+                    )
+                )
+            ),
+            'alterar-status-professor' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/inativar-professor[/:id]',
+                    'defaults' => array(
+                        'action' => 'alterarStatusProfessor',
+                        'id' => '0'
+                    )
+                )
+            ),
+        )
     ),
 );

@@ -60,7 +60,7 @@ class UsuarioModel extends AbstractModel {
         $newData = array(
             'cpf'       => $user->getCpf(),
             'nome'      => $user->getNome(),
-            'dta_nasc'  => $user->getDtaNasc(),
+            'telefone'  => $user->getTelefone(),
             'email'     => $user->getEmail(),
             'pwd'       => $user->getPwd(),
             'fk_perfil' => $user->getFkPerfil(),
@@ -130,11 +130,11 @@ class UsuarioModel extends AbstractModel {
         $data = array(
             'cpf'       => $user->getCpf(),
             'nome'      => $user->getNome(),
-            'dta_nasc'  => $user->getDtaNasc(),
+            'telefone'  => $user->getTelefone(),
             'email'     => $user->getEmail(),
             'pwd'       => $user->getPwd(),
             'fk_perfil' => $user->getFkPerfil(),
-            'adm'       => 0, //0 = não administrador
+            'adm'       => $user->getAdm(),
             'status'    => $user->getStatus()
         );
         $sql = new \Zend\Db\Sql\Sql($this->adapter);
@@ -210,6 +210,97 @@ EOT;
             $entities[] = $entity;
         }
         return $entities;
+    }
+    
+    public function listUsersAdm() {
+        $sql = <<<EOT
+            SELECT
+                usuario.id,
+                usuario.cpf,
+                usuario.nome,
+                usuario.telefone,
+                usuario.email,
+                usuario.fk_perfil,
+                usuario.status,
+                curso_aluno.cod as curso_aluno,
+                curso_servidor.cod as curso_servidor
+            FROM
+                tb_usuario AS usuario
+            LEFT JOIN 
+                tb_usuario_curso AS usu_curso ON usuario.id = usu_curso.fk_usuario
+            LEFT JOIN 
+                tb_perfil AS perfil ON usuario.fk_perfil = perfil.id
+            LEFT JOIN 
+                tb_curso AS curso_aluno ON usu_curso.fk_curso = curso_aluno.id
+            LEFT JOIN 
+                tb_curso AS curso_servidor ON perfil.fk_curso = curso_servidor.id
+            ORDER BY
+                usuario.nome
+EOT;
+        $statement = $this->adapter->query($sql);
+        return $statement->execute();
+    }
+    
+    public function insertServidor(\Secretaria\Model\Entity\Usuario $user)
+    {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $insert = $sql->insert(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $newData = array(
+            'cpf'       => $user->getCpf(),
+            'nome'      => $user->getNome(),
+            'telefone'  => $user->getTelefone(),
+            'email'     => $user->getEmail(),
+            'pwd'       => $user->getPwd(),
+            'fk_perfil' => $user->getFkPerfil(),
+            'adm'       => $user->getAdm(),
+            'status'    => $user->getStatus()
+        );
+        $insert->values($newData);
+        $statement = $sql->prepareStatementForSqlObject($insert);
+        $resultSet = $statement->execute();
+        return $resultSet->getGeneratedValue();
+    }
+    
+    public function findEmailById($idUsuario)
+    {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $select->columns(array('email'));
+        $select->where->equalTo('id', $idUsuario);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute()->current();
+
+        return $resultSet['email'];
+    }
+    
+    public function updateStatus($id, $status)
+    {
+        $data = array(
+            'status' => $status
+        );
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $update = $sql->update(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $update->set($data);
+        $update->where('id = '. $id);
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $resultSet = $statement->execute();
+    }
+    
+    public function findAllById($id) {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $select->where->equalTo('id', $id);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute();
+
+        $entity = false;
+        if ($resultSet->count()) {
+            $entity = new \Secretaria\Model\Entity\Usuario($resultSet->current());
+        }
+
+        return $entity;
     }
 
 }

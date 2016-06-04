@@ -1,0 +1,33 @@
+<div class="col-lg-8">
+    <section class="panel">
+        <header class="panel-heading text-center">
+            Editar Curso
+        </header>
+        <div class="panel-body">
+            <div class="form-group col-lg-14 text-center">
+                <?php echo $this->flashMessenger()->render('error', array('alert alert-block alert-danger')); ?>
+                <?php echo $this->flashMessenger()->render('info', array('alert alert-info')); ?>
+                <?php echo $this->flashMessenger()->render('success', array('alert alert-success')); ?>
+            </div>
+            <form name="editarCurso" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/editar-curso', array('id' => $this->id)); ?>">
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Código </label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value="<?php echo $this->curso->getCod(); ?>" maxlength="45" required="required" placeholder="Código referente ao curso" name="cod">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Descrição </label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" value="<?php echo $this->curso->getDescricao(); ?>" maxlength="255" required="required" placeholder="Nome do curso" name="descricao">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <input type="reset" id="resetbutton" class="btn btn-warning" value="Limpar">
+                    <input class="btn btn-success" type="submit" value="Salvar Alterações">
+                </div>
+                <p class="text-center"><a href="<?php echo $this->url('adm'); ?>">Voltar</a></p>
+            </form>
+        </div>
+    </section>
+</div>

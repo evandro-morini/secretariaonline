@@ -1,0 +1,55 @@
+<div class="col-lg-8">
+    <section class="panel">
+        <header class="panel-heading text-center">
+            Editar Disciplina
+        </header>
+        <div class="panel-body">
+            <div class="form-group col-lg-14 text-center">
+                <?php echo $this->flashMessenger()->render('error', array('alert alert-block alert-danger')); ?>
+                <?php echo $this->flashMessenger()->render('info', array('alert alert-info')); ?>
+                <?php echo $this->flashMessenger()->render('success', array('alert alert-success')); ?>
+            </div>
+            <form name="editarDisciplina" class="form-horizontal" role="form" method="post" action="<?php echo $this->url('adm/editar-disciplina', array('id' => $this->id)); ?>">
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Código </label>
+                    <div class="col-lg-10">
+                        <input class="form-control" type="text" value="<?php echo $this->disciplina->getCod(); ?>" maxlength="45" required="required" placeholder="Código referente a disciplina" name="cod">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Descrição </label>
+                    <div class="col-lg-10">
+                        <input class="form-control" type="text" value="<?php echo $this->disciplina->getDescricao(); ?>" maxlength="255" required="required" placeholder="Nome da disciplina" name="descricao">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Professor </label>
+                    <div class="col-lg-10">
+                        <select class="form-control" required="required" name="professor">
+                            <?php foreach ($this->professores as $professor) : ?>
+                                <option value="<?php echo $professor->getId(); ?>" <?php if($professor->getId() == $this->disciplina->getFkProfessor()){ echo 'selected'; } ?>><?php echo $professor->getNome(); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-lg-2 col-sm-2 control-label">Curso </label>
+                    <div class="col-lg-10">
+                        <select class="form-control" required="required" name="curso">
+                            <?php foreach ($this->cursos as $curso) : ?>
+                                <option value="<?php echo $curso->getId(); ?>" <?php if($curso->getId() == $this->disciplina->getFkCurso()){ echo 'selected'; } ?>><?php echo $curso->getDescricao(); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <input type="reset" id="resetbutton" class="btn btn-warning" value="Limpar">
+                        <input class="btn btn-success" type="submit" value="Salvar Alterações">
+                    </div>
+                </div>
+                <p class="text-center"><a href="<?php echo $this->url('adm'); ?>">Voltar</a></p>
+            </form>
+        </div>
+    </section>
+</div>

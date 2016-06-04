@@ -4,11 +4,12 @@ namespace Secretaria\Controller;
 
 use Secretaria\Form\AlunoForm;
 use Secretaria\Form\Filter\AlunoFilter;
-use Secretaria\Model\Entity\Usuario;
-use Secretaria\Model\UsuarioModel;
-use Secretaria\Model\CursoModel;
 use Secretaria\Controller\CryptoController;
 use Zend\View\Model\ViewModel;
+use Secretaria\Model\CursoModel;
+use Secretaria\Model\PerfilModel;
+use Secretaria\Model\UsuarioModel;
+use Secretaria\Model\Entity\Usuario;
 use Zend\Authentication\AuthenticationService;
 
 class HomeController extends AbstractController {
@@ -64,8 +65,8 @@ class HomeController extends AbstractController {
                             $newUser->setFkPerfil(1); //fk do perfil de aluno
                             $newUser->setStatus(0); //só será ativo após confirmação via email
                             //validação da data
-                            if (!empty($data['dta_nasc']) && strpos($data['dta_nasc'], '_') === false) {
-                                $newUser->setDtaNasc($this->formatDateTimeBr($data['dta_nasc']));
+                            if (!empty($data['telefone']) && strpos($data['telefone'], '_') === false) {
+                                $newUser->setTelefone($data['telefone']);
                             }
                             $idUsuario = $usuarioModel->insertUser($newUser);
                             $idMatriculado = $usuarioModel->insertEnrollment($idUsuario, $data['curso'], $data['matricula']);
@@ -126,59 +127,54 @@ class HomeController extends AbstractController {
     }
 
     public function editarUsuarioAction() {
-        //dados da sessão
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
+        $id = $usuarioSessao->pkUsuario;
         $usuarioModel = new UsuarioModel($this->getDbAdapter());
-        $usuario = $usuarioModel->findById($usuarioSessao->pkUsuario);
-        $matricula = $usuarioModel->getEnrollment($usuarioSessao->pkUsuario);
-        $usuario->setDtaNasc($this->formatDateTime($usuario->getDtaNasc()));
-
-        //preenchendo select de cursos
+        $perfilModel = new PerfilModel($this->getDbAdapter());
         $cursoModel = new CursoModel($this->getDbAdapter());
-        $listaCursos = $cursoModel->findCursos();
-        //formulario novo aluno
-        $alunoForm = new AlunoForm($listaCursos);
-        $alunoForm->setInputFilter(new AlunoFilter());
+        $user = $usuarioModel->findById($id); //entidade usuario
+        //\Zend\Debug\Debug::dump($user);exit;
+        $matricula = $usuarioModel->getSubject($id);
+        $perfisCadastroUsuario = $perfilModel->findFkPerfis(); //array perfis
+        $cursosUsuario = $cursoModel->findCursos();
 
-        //requisição via post
+        //Parametros vindos da requisicao
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            $alunoForm->setData($data);
-
-            if ($alunoForm->isValid()) {
-                //FORMULÁRIO VALIDADO E GRR VALIDADO -> SALVAR DADOS
+            $updateUser = new Usuario();
+            $updateUser->setCpf($data['cpf']);
+            $updateUser->setNome($data['nome']);
+            $updateUser->setTelefone($data['telefone']);
+            $updateUser->setEmail($data['email']);
+            $updateUser->setStatus(1);
+            $updateUser->setAdm($user->getAdm());
+            $updateUser->setFkPerfil($user->getFkPerfil());
+            if (!empty($data['password'])) {
                 $crypto = new CryptoController();
                 $cryptoPwd = $crypto->criarAction($data['password']);
-
-                $newUser = new Usuario();
-                $newUser->setCpf($data['cpf']);
-                $newUser->setNome($data['nome']);
-                $newUser->setEmail($data['email']);
-                $newUser->setPwd($cryptoPwd);
-                $newUser->setFkPerfil(1); //fk do perfil de aluno
-                $newUser->setStatus(1);
-                //validação da data
-                if (!empty($data['dta_nasc']) && strpos($data['dta_nasc'], '_') === false) {
-                    $newUser->setDtaNasc($this->formatDateTimeBr($data['dta_nasc']));
-                }
-                $usuarioModel = new UsuarioModel($this->getDbAdapter());
-                $usuarioModel->updateUser($usuarioSessao->pkUsuario, $newUser);
-                $usuarioModel->updateEnrollment($usuarioSessao->pkUsuario, $data['curso'], $data['matricula']);
-
-                $this->flashMessenger()->addSuccessMessage("Dados atualizados com sucesso!");
-                $this->redirect()->refresh();
+                $updateUser->setPwd($cryptoPwd);
             } else {
-                $this->flashMessenger()->addErrorMessage($alunoForm->getMessages());
-                $this->redirect()->refresh();
+                $updateUser->setPwd($user->getPwd());
             }
+
+            if ($user->getFkPerfil() == 1) {
+                $usuarioModel->updateEnrollment($id, $data['curso'], $data['matricula']);
+            } 
+            
+            $usuarioModel->updateUser($id, $updateUser);
+            $this->flashMessenger()->addSuccessMessage("Usuário atualizado com sucesso!");
+            $this->redirect()->refresh();
         }
 
         return new ViewModel(array(
-            'form' => $alunoForm,
-            'usuario' => $usuario,
-            'matricula' => $matricula
+            'id' => $id,
+            'usuario' => $user,
+            'matricula' => $matricula['matricula'],
+            'idCurso' => $matricula['fk_curso'],
+            'perfisUsuario' => $perfisCadastroUsuario,
+            'cursosUsuario' => $cursosUsuario
         ));
     }
     

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 26-Maio-2016 às 04:02
+-- Generation Time: 05-Jun-2016 às 01:26
 -- Versão do servidor: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -34,18 +34,7 @@ CREATE TABLE IF NOT EXISTS `tb_atribuido` (
   PRIMARY KEY (`id`),
   KEY `fk_atribuido_solic_idx` (`fk_solicitacao`),
   KEY `fk_atribuido_usuario_idx` (`fk_usuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
-
---
--- Extraindo dados da tabela `tb_atribuido`
---
-
-INSERT INTO `tb_atribuido` (`id`, `fk_solicitacao`, `fk_usuario`, `dta_inc`) VALUES
-(20, 48, 15, '2016-05-20 16:19:48'),
-(21, 49, 15, '2016-05-20 16:19:57'),
-(22, 48, 16, '2016-05-20 16:22:05'),
-(23, 50, 15, '2016-05-20 23:38:47'),
-(24, 50, 16, '2016-05-20 23:40:54');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=30 ;
 
 -- --------------------------------------------------------
 
@@ -59,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `tb_curso` (
   `descricao` varchar(255) NOT NULL,
   `status` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Extraindo dados da tabela `tb_curso`
@@ -82,8 +71,9 @@ CREATE TABLE IF NOT EXISTS `tb_disciplina` (
   `descricao` varchar(255) NOT NULL,
   `status` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_disciplina_curso_idx` (`fk_curso`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+  KEY `fk_disciplina_curso_idx` (`fk_curso`),
+  KEY `fk_disciplina_professor_idx` (`fk_professor`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Extraindo dados da tabela `tb_disciplina`
@@ -91,7 +81,8 @@ CREATE TABLE IF NOT EXISTS `tb_disciplina` (
 
 INSERT INTO `tb_disciplina` (`id`, `fk_curso`, `fk_professor`, `cod`, `descricao`, `status`) VALUES
 (1, 1, 1, 'TI143', 'Gerência de Projeto de Software', 1),
-(2, 1, 2, 'TI027', 'Prática de Algoritmos', 1);
+(2, 1, 2, 'TI027', 'Prática de Algoritmos', 1),
+(3, 1, 3, 'TI159', 'Tópicos Especiais', 1);
 
 -- --------------------------------------------------------
 
@@ -110,16 +101,7 @@ CREATE TABLE IF NOT EXISTS `tb_encaminhado` (
   KEY `fk_encaminhado_solicitacao_idx` (`fk_solicitacao`),
   KEY `fk_encaminhado_usuario_old_idx` (`fk_usuario_old`),
   KEY `fk_encaminhado_usuario_new_idx` (`fk_usuario_new`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
-
---
--- Extraindo dados da tabela `tb_encaminhado`
---
-
-INSERT INTO `tb_encaminhado` (`id`, `fk_solicitacao`, `fk_usuario_old`, `fk_usuario_new`, `justificativa`, `dta_inc`) VALUES
-(12, 48, 15, 16, 'Favor verificar, o prazo de matrícula já foi ultrapassado.', '2016-05-20 16:20:33'),
-(13, 48, 16, 15, 'Adão, por favor aceite o requerimento do aluno.', '2016-05-20 16:22:30'),
-(14, 50, 15, 16, 'Neves, a solicitação está fora do prazo. Favor verificar.', '2016-05-20 23:39:54');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
@@ -136,15 +118,7 @@ CREATE TABLE IF NOT EXISTS `tb_encerrado` (
   PRIMARY KEY (`id`),
   KEY `fk_encerrado_solicitacao_idx` (`fk_solicitacao`),
   KEY `fk_encerrado_usuario_idx` (`fk_usuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- Extraindo dados da tabela `tb_encerrado`
---
-
-INSERT INTO `tb_encerrado` (`id`, `fk_solicitacao`, `fk_usuario`, `justificativa`, `dta_inc`) VALUES
-(2, 49, 15, 'Deferido. Solicitação realizada com sucesso.', '2016-05-20 16:21:22'),
-(3, 50, 16, 'Deferido.', '2016-05-20 23:41:42');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
 
@@ -182,7 +156,7 @@ CREATE TABLE IF NOT EXISTS `tb_professor` (
   `email` varchar(255) NOT NULL,
   `status` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Extraindo dados da tabela `tb_professor`
@@ -190,7 +164,8 @@ CREATE TABLE IF NOT EXISTS `tb_professor` (
 
 INSERT INTO `tb_professor` (`id`, `nome`, `email`, `status`) VALUES
 (1, 'Rafaela Mantovani Fontana', 'rafaela.m.fontana@gmail.com', 1),
-(2, 'Luiz Antonio Pereira Neves', 'lapneves@gmail.com', 1);
+(2, 'Luiz Antonio Pereira Neves', 'lapneves@gmail.com', 1),
+(3, 'Alessandro Brawerman', 'brawerman@gmail.com', 1);
 
 -- --------------------------------------------------------
 
@@ -215,17 +190,7 @@ CREATE TABLE IF NOT EXISTS `tb_solicitacao` (
   KEY `fk_tb_solicitacao_curso_idx` (`fk_curso`),
   KEY `fk_tb_solicitacao_status_idx` (`fk_status`),
   KEY `fk_tb_solicitacao_tipo_idx` (`fk_tipo_solicitacao`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=52 ;
-
---
--- Extraindo dados da tabela `tb_solicitacao`
---
-
-INSERT INTO `tb_solicitacao` (`id`, `fk_usuario`, `fk_curso`, `protocolo`, `fk_tipo_solicitacao`, `observacao`, `arquivo`, `fk_status`, `dta_abertura`, `dta_alteracao`, `dta_fechamento`) VALUES
-(48, 11, 1, '20160520CO048', 4, NULL, NULL, 3, '2016-05-20 16:17:35', '2016-05-20 16:22:31', NULL),
-(49, 11, 1, '20160520OS049', 5, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tincidunt venenatis elit, et porta elit consectetur sed. Morbi non quam nec neque viverra pulvinar. Donec tempus mi sit amet turpis tempus, vestibulum porttitor dui ultrices. Quisque non quam sem. Vivamus hendrerit posuere blandit. Curabitur tincidunt nisi magna, quis lobortis enim auctor eu. Cras interdum pulvinar sem, in consequat risus scelerisque ultrices. Maecenas lobortis risus diam, fermentum malesuada mauris dictum ut. Vivamus metus nulla, egestas in auctor eu, auctor et orci. Nulla dapibus augue velit, non iaculis nisl lobortis tincidunt. Morbi odio mauris, euismod eu turpis ac, vehicula elementum turpis. ', 'photo23.jpg', 4, '2016-05-20 16:19:06', '2016-05-20 16:19:57', '2016-05-20 16:21:22'),
-(50, 11, 1, '20160520OS050', 5, 'Declaração de matrícula.', '26115.jpg', 4, '2016-05-20 23:37:33', '2016-05-20 23:40:54', '2016-05-20 23:41:42'),
-(51, 11, 1, '20160520CO051', 4, NULL, NULL, 5, '2016-05-20 23:46:11', NULL, '2016-05-20 23:46:48');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=66 ;
 
 -- --------------------------------------------------------
 
@@ -241,16 +206,6 @@ CREATE TABLE IF NOT EXISTS `tb_solicitacao_disciplina` (
   KEY `fk_disciplina_solicitacao_idx` (`fk_disciplina`),
   KEY `fk_solicitacao_disciplina_tipo_idx` (`fk_tipo_solic_disciplina`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Extraindo dados da tabela `tb_solicitacao_disciplina`
---
-
-INSERT INTO `tb_solicitacao_disciplina` (`fk_solicitacao`, `fk_disciplina`, `fk_tipo_solic_disciplina`) VALUES
-(48, 1, 2),
-(48, 2, 3),
-(51, 1, 2),
-(51, 2, 3);
 
 -- --------------------------------------------------------
 
@@ -332,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `tb_usuario` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cpf` varchar(11) NOT NULL,
   `nome` varchar(255) NOT NULL,
-  `dta_nasc` date DEFAULT NULL,
+  `telefone` varchar(14) DEFAULT NULL,
   `email` varchar(45) NOT NULL,
   `pwd` varchar(255) NOT NULL,
   `fk_perfil` int(11) NOT NULL,
@@ -346,12 +301,12 @@ CREATE TABLE IF NOT EXISTS `tb_usuario` (
 -- Extraindo dados da tabela `tb_usuario`
 --
 
-INSERT INTO `tb_usuario` (`id`, `cpf`, `nome`, `dta_nasc`, `email`, `pwd`, `fk_perfil`, `adm`, `status`) VALUES
-(11, '04763305999', 'Evandro Morini Silva', '1985-08-19', 'evandro.morini@gmail.com', 'aaa2f054b103184b6280569d311e0a219d5436ea', 1, 0, 1),
-(13, '06499454923', 'Patrícia Pacheco dos Santos', '1987-11-15', 'pati.p.santos@hotmail.com', '94cbcdee6d2771acf9a2f73a0373994b1919c3bc', 1, 0, 1),
-(15, '55499508470', 'Adão', '1985-08-19', 'testeservidor@teste.com', 'e852ca3a736cf9f50237cab54e3ed84b7aeb9144', 2, 0, 1),
-(16, '20659217309', 'Luiz Antonio Pereira Neves', '1988-05-31', 'testeadm@teste.com', '8eb456f281c9b4ae8e3877ffdfa7d784631e5a30', 3, 1, 1),
-(17, '12345678911', 'Otávio Ledur', '1982-03-19', 'otavio.ledur@gmail.com', '5ad1984a8790720998f0cd804e4e46a82444be56', 1, 0, 0);
+INSERT INTO `tb_usuario` (`id`, `cpf`, `nome`, `telefone`, `email`, `pwd`, `fk_perfil`, `adm`, `status`) VALUES
+(11, '04763305999', 'Evandro Morini Silva', '(41) 8810-1513', 'evandrogtr@hotmail.com', 'aaa2f054b103184b6280569d311e0a219d5436ea', 1, 0, 1),
+(13, '06499454923', 'Patrícia Pacheco dos Santos', '(41) 3045-5425', 'pati.p.santos@hotmail.com', '94cbcdee6d2771acf9a2f73a0373994b1919c3bc', 1, 0, 1),
+(15, '55499508470', 'Adão', '(41) 9727-6020', 'testeservidor@teste.com', 'e852ca3a736cf9f50237cab54e3ed84b7aeb9144', 2, 0, 1),
+(16, '20659217309', 'Luiz Antonio Pereira Neves', '(41) 9985-9711', 'testeadm@teste.com', '8eb456f281c9b4ae8e3877ffdfa7d784631e5a30', 3, 1, 1),
+(17, '12345678911', 'Otávio Ledur', '(41) 8110-8765', 'otavio.ledur@gmail.com', 'c920fc2b4a1d62023ecc7627df456442cebff6d2', 1, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -394,7 +349,7 @@ ALTER TABLE `tb_atribuido`
 --
 ALTER TABLE `tb_disciplina`
   ADD CONSTRAINT `fk_disciplina_curso` FOREIGN KEY (`fk_curso`) REFERENCES `tb_curso` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_disciplina_professor` FOREIGN KEY (`id`) REFERENCES `tb_professor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_disciplina_professor` FOREIGN KEY (`fk_professor`) REFERENCES `tb_professor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Limitadores para a tabela `tb_encaminhado`
