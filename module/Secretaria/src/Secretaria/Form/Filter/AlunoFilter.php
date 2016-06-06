@@ -66,6 +66,32 @@ class AlunoFilter extends InputFilter {
         ));
         
         $this->add(array(
+            'name' => 'telefone',
+            'required' => true,
+            'filters' => array(
+                array('name' => 'StripTags'),
+                array('name' => 'StringTrim'),
+            ),
+            'validators' => array(
+                array(
+                    'name' => 'NotEmpty',
+                    'options' => array(
+                        'messages' => array(
+                            $isEmpty => 'O campo telefone não pode ser vazio.'
+                        )
+                    ),
+                    'break_chain_on_failure' => true
+                ),
+                array(
+                    'name' => 'stringLength',
+                    'options' => array(
+                        'max' => 255
+                    ),
+                ),
+            ),
+        ));
+        
+        $this->add(array(
             'name' => 'nome',
             'required' => true,
             'filters' => array(
