@@ -28,7 +28,7 @@ class AlunoForm extends Form {
             'attributes' => array(
                 'class' => 'form-control',
                 'id' => 'cpfinput',
-                'placeholder' => 'Insira seu CPF',
+                'placeholder' => 'Insira seu CPF (somente números)',
                 'required' => true,
                 'maxlength' => 11
             ),
@@ -85,6 +85,7 @@ class AlunoForm extends Form {
                 'class' => 'form-control',
                 'id' => 'telinput',
                 'placeholder' => '(DDD)XXXX-XXXX',
+                'required' => true,
                 'maxlength' => 15
             ),
         ));
