@@ -50,6 +50,15 @@ return array(
                     )
                 )
             ),
+            'reset-senha' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => 'reset-senha',
+                    'defaults' => array(
+                        'action' => 'resetSenha'
+                    )
+                )
+            ),
         )
     ),
     'autenticacao' => array(

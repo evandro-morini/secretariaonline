@@ -170,6 +170,17 @@ class UsuarioModel extends AbstractModel {
         return (int)$result['num'];
     }
     
+    public function countEmail($email)
+    {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $select->columns(array('num' => new \Zend\Db\Sql\Expression('COUNT(*)')));
+        $select->where('email like ' . "'$email'");
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute()->current();
+        return (int)$result['num'];
+    }
+    
     public function findListaServidores($idUsuario, $idCurso) {
         $sql = <<<EOT
             SELECT
@@ -301,6 +312,19 @@ EOT;
         }
 
         return $entity;
+    }
+    
+    public function updatePwd($email, $newPwd)
+    {
+        $data = array(
+            'pwd' => $newPwd
+        );
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $update = $sql->update(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $update->set($data);
+        $update->where("email LIKE '". $email . "'");
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $resultSet = $statement->execute();
     }
 
 }

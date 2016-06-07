@@ -35,8 +35,10 @@ class HomeController extends AbstractController {
             if ($alunoForm->isValid()) {
                 //verifica se já não possui cadastro
                 $usuarioModel = new UsuarioModel($this->getDbAdapter());
-                $countMatricula = $usuarioModel->countEnrollment($data['matricula']);
-                if ($countMatricula == 0) {
+                $validacoes = $usuarioModel->countEnrollment($data['matricula']);
+                $validacoes += $usuarioModel->countEmail($data['email']);
+
+                if ($validacoes == 0) {
                     //BUSCA DA MATRICULA DO ALUNO NO ARQUIVO CSV
                     $grantedFile = $_SERVER['DOCUMENT_ROOT'] . 'secretariaonline/public/csv/granted.csv';
                     try {
@@ -103,7 +105,7 @@ class HomeController extends AbstractController {
                         //$this->redirect()->refresh();
                     }
                 } else {
-                    $this->flashMessenger()->addErrorMessage('A matrícula informada já possui cadastro no sistema da secretaria. Favor verificar.');
+                    $this->flashMessenger()->addErrorMessage('A matrícula/email informados já estão cadastrados em nosso sistema. Favor verificar.');
                     //$this->redirect()->refresh(); 
                 }
             } else {
@@ -161,8 +163,8 @@ class HomeController extends AbstractController {
 
             if ($user->getFkPerfil() == 1) {
                 $usuarioModel->updateEnrollment($id, $data['curso'], $data['matricula']);
-            } 
-            
+            }
+
             $usuarioModel->updateUser($id, $updateUser);
             $this->flashMessenger()->addSuccessMessage("Usuário atualizado com sucesso!");
             $this->redirect()->refresh();
@@ -177,13 +179,74 @@ class HomeController extends AbstractController {
             'cursosUsuario' => $cursosUsuario
         ));
     }
-    
+
     public function deniedAction() {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
         $this->layout()->setTemplate('layout/layout-no-session');
         return new ViewModel(array(
             'perfil' => $usuarioSessao->perfil
+        ));
+    }
+
+    public function resetSenhaAction() {
+        //preenchendo select de cursos
+        $cursoModel = new CursoModel($this->getDbAdapter());
+        $listaCursos = $cursoModel->findCursos();
+        //formulario novo aluno
+        $alunoForm = new \Secretaria\Form\ResetSenhaForm();
+        $alunoForm->setInputFilter(new \Secretaria\Form\Filter\ResetSenhaFilter());
+
+        //requisição via post
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $alunoForm->setData($data);
+
+            if ($alunoForm->isValid()) {
+                //verifica se já não possui cadastro
+                $usuarioModel = new UsuarioModel($this->getDbAdapter());
+                $validacoes = $usuarioModel->countEmail($data['email']);
+                if ($validacoes > 0) {
+                    $crypto = new CryptoController();
+                    $cryptoPwd = $crypto->criarAction($data['password']);
+                    $usuarioModel->updatePwd($data['email'], $cryptoPwd);
+
+                    $bodyPart = new \Zend\Mime\Message();
+                    $bodyMessage = new \Zend\Mime\Part('Olá, recebemos uma solicitação de troca de senha para a conta vinculada a este email ('. $data['email'] . '). A nova senha escolhida é <b>' . $data['password'] . '</b>. Em caso de dúvidas, por favor contate a secretaria do seu curso.');
+                    $bodyMessage->type = 'text/html';
+                    $bodyPart->setParts(array($bodyMessage));
+                    $message = new \Zend\Mail\Message();
+                    $message->addTo($data['email'], $data['email'])
+                            ->addFrom('secretaria.online.ufpr@gmail.com', 'Secretaria Online')
+                            ->setSubject('Reset de Senha')
+                            ->setBody($bodyPart)
+                            ->setEncoding('UTF-8');
+
+                    $smtpOptions = new \Zend\Mail\Transport\SmtpOptions(array(
+                        "name" => "gmail",
+                        "host" => "smtp.gmail.com",
+                        "port" => 587,
+                        "connection_class" => "plain",
+                        "connection_config" => array("username" => "secretaria.online.ufpr@gmail.com",
+                            "password" => "ufpr2016", "ssl" => "tls")
+                    ));
+
+                    $transport = new \Zend\Mail\Transport\Smtp($smtpOptions);
+                    $transport->send($message);
+                    $this->flashMessenger()->addSuccessMessage("Troca de senha realizada com sucesso.");
+                    $this->redirect()->refresh();
+                } else {
+                    $this->flashMessenger()->addErrorMessage('O email informado não consta em nosso sistema. Favor verificar.');
+                }
+            } else {
+                $this->flashMessenger()->addErrorMessage($alunoForm->getMessages());
+                //$this->redirect()->refresh();
+            }
+        }
+        $this->layout()->setTemplate('layout/layout-no-session');
+        return new ViewModel(array(
+            'form' => $alunoForm
         ));
     }
 

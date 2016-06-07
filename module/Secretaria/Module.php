@@ -14,7 +14,8 @@ class Module {
     protected $whitelist = array(
         'autenticacao',
         'home/novo-usuario',
-        'home/ativar-cadastro'
+        'home/ativar-cadastro',
+        'home/reset-senha'
     );
 
     public function onBootstrap(MvcEvent $e) {
