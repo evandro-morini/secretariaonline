@@ -25,10 +25,10 @@ return array(
             'ativar-cadastro' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => 'ativar-cadastro[/:cpf]',
+                    'route' => 'ativar-cadastro[/:hash]',
                     'defaults' => array(
                         'action' => 'ativarCadastro',
-                        'cpf' => 0
+                        'hash' => ''
                     )
                 )
             ),
@@ -56,6 +56,16 @@ return array(
                     'route' => 'reset-senha',
                     'defaults' => array(
                         'action' => 'resetSenha'
+                    )
+                )
+            ),
+            'confirma-reset' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => 'confirma-reset[/:hash]',
+                    'defaults' => array(
+                        'action' => 'confirmaReset',
+                        'hash' => ''
                     )
                 )
             ),

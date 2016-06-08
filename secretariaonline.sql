@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 05-Jun-2016 às 01:26
+-- Generation Time: 08-Jun-2016 às 02:50
 -- Versão do servidor: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `tb_atribuido` (
   PRIMARY KEY (`id`),
   KEY `fk_atribuido_solic_idx` (`fk_solicitacao`),
   KEY `fk_atribuido_usuario_idx` (`fk_usuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=30 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=32 ;
 
 -- --------------------------------------------------------
 
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `tb_curso` (
   `descricao` varchar(255) NOT NULL,
   `status` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 --
 -- Extraindo dados da tabela `tb_curso`
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `tb_encaminhado` (
   KEY `fk_encaminhado_solicitacao_idx` (`fk_solicitacao`),
   KEY `fk_encaminhado_usuario_old_idx` (`fk_usuario_old`),
   KEY `fk_encaminhado_usuario_new_idx` (`fk_usuario_new`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
 
 -- --------------------------------------------------------
 
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `tb_encerrado` (
   PRIMARY KEY (`id`),
   KEY `fk_encerrado_solicitacao_idx` (`fk_solicitacao`),
   KEY `fk_encerrado_usuario_idx` (`fk_usuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 -- --------------------------------------------------------
 
@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `tb_solicitacao` (
   KEY `fk_tb_solicitacao_curso_idx` (`fk_curso`),
   KEY `fk_tb_solicitacao_status_idx` (`fk_status`),
   KEY `fk_tb_solicitacao_tipo_idx` (`fk_tipo_solicitacao`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=66 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=69 ;
 
 -- --------------------------------------------------------
 
@@ -287,26 +287,27 @@ CREATE TABLE IF NOT EXISTS `tb_usuario` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cpf` varchar(11) NOT NULL,
   `nome` varchar(255) NOT NULL,
-  `telefone` varchar(14) DEFAULT NULL,
+  `telefone` varchar(14) NOT NULL,
   `email` varchar(45) NOT NULL,
   `pwd` varchar(255) NOT NULL,
   `fk_perfil` int(11) NOT NULL,
   `adm` tinyint(1) NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '0',
+  `hash` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `tb_usuario_fk_perfil_idx` (`fk_perfil`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
 
 --
 -- Extraindo dados da tabela `tb_usuario`
 --
 
-INSERT INTO `tb_usuario` (`id`, `cpf`, `nome`, `telefone`, `email`, `pwd`, `fk_perfil`, `adm`, `status`) VALUES
-(11, '04763305999', 'Evandro Morini Silva', '(41) 8810-1513', 'evandrogtr@hotmail.com', 'aaa2f054b103184b6280569d311e0a219d5436ea', 1, 0, 1),
-(13, '06499454923', 'Patrícia Pacheco dos Santos', '(41) 3045-5425', 'pati.p.santos@hotmail.com', '94cbcdee6d2771acf9a2f73a0373994b1919c3bc', 1, 0, 1),
-(15, '55499508470', 'Adão', '(41) 9727-6020', 'testeservidor@teste.com', 'e852ca3a736cf9f50237cab54e3ed84b7aeb9144', 2, 0, 1),
-(16, '20659217309', 'Luiz Antonio Pereira Neves', '(41) 9985-9711', 'testeadm@teste.com', '8eb456f281c9b4ae8e3877ffdfa7d784631e5a30', 3, 1, 1),
-(17, '12345678911', 'Otávio Ledur', '(41) 8110-8765', 'otavio.ledur@gmail.com', 'c920fc2b4a1d62023ecc7627df456442cebff6d2', 1, 0, 1);
+INSERT INTO `tb_usuario` (`id`, `cpf`, `nome`, `telefone`, `email`, `pwd`, `fk_perfil`, `adm`, `status`, `hash`) VALUES
+(11, '04763305999', 'Evandro Morini Silva', '(41) 8810-1513', 'evandrogtr@hotmail.com', 'aaa2f054b103184b6280569d311e0a219d5436ea', 1, 0, 1, '7c45f07749a7f06a98cff559931f6cb3'),
+(13, '06499454923', 'Patrícia Pacheco dos Santos', '(41) 3045-5425', 'pati.p.santos@hotmail.com', '94cbcdee6d2771acf9a2f73a0373994b1919c3bc', 1, 0, 1, '4e732e654d47b5f91586f99e3cad2770\r\n'),
+(15, '55499508470', 'Adão', '(41) 9727-6020', 'testeservidor@teste.com', 'e852ca3a736cf9f50237cab54e3ed84b7aeb9144', 2, 0, 1, 'ab63eb803423a8b09d08d3805c7b9c10\r\n'),
+(16, '20659217309', 'Luiz Antonio Pereira Neves', '(41) 9985-9711', 'testeadm@teste.com', '8eb456f281c9b4ae8e3877ffdfa7d784631e5a30', 3, 1, 1, '16f98d0182e0b50e28473763238c57a9\r\n'),
+(17, '12345678911', 'Otávio Ledur', '(41) 8110-8765', 'otavio.ledur@gmail.com', 'c920fc2b4a1d62023ecc7627df456442cebff6d2', 1, 0, 1, '1f50ca4e8299c9e4ae601f179fbc440c\r\n');
 
 -- --------------------------------------------------------
 
@@ -322,7 +323,7 @@ CREATE TABLE IF NOT EXISTS `tb_usuario_curso` (
   PRIMARY KEY (`id`),
   KEY `fk_usuario_curso_usuario_idx` (`fk_usuario`),
   KEY `fk_usuario_curso_curso_idx` (`fk_curso`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=14 ;
 
 --
 -- Extraindo dados da tabela `tb_usuario_curso`

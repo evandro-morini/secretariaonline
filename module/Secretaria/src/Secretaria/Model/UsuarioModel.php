@@ -53,6 +53,23 @@ class UsuarioModel extends AbstractModel {
         return $entity;
     }
     
+    public function findByHash($hash) {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $select->where->equalTo('hash', $hash);
+        $select->where->equalTo('status', 1);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute();
+
+        $entity = false;
+        if ($resultSet->count()) {
+            $entity = new \Secretaria\Model\Entity\Usuario($resultSet->current());
+        }
+
+        return $entity;
+    }
+    
     public function insertUser(\Secretaria\Model\Entity\Usuario $user)
     {
         $sql = new \Zend\Db\Sql\Sql($this->adapter);
@@ -65,7 +82,8 @@ class UsuarioModel extends AbstractModel {
             'pwd'       => $user->getPwd(),
             'fk_perfil' => $user->getFkPerfil(),
             'adm'       => 0, //0 = não administrador
-            'status'    => $user->getStatus()
+            'status'    => $user->getStatus(),
+            'hash'      => $user->getHash()
         );
         $insert->values($newData);
         $statement = $sql->prepareStatementForSqlObject($insert);
@@ -88,7 +106,7 @@ class UsuarioModel extends AbstractModel {
         return $resultSet->getGeneratedValue();
     }
     
-    public function activateUser($cpf)
+    public function activateUser($hash)
     {
         $data = array(
             'status' => 1 //status ATIVO
@@ -96,7 +114,7 @@ class UsuarioModel extends AbstractModel {
         $sql = new \Zend\Db\Sql\Sql($this->adapter);
         $update = $sql->update(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
         $update->set($data);
-        $update->where("cpf LIKE '". $cpf . "'");
+        $update->where("hash LIKE '". $hash . "'");
         $statement = $sql->prepareStatementForSqlObject($update);
         $resultSet = $statement->execute();
     }
@@ -135,7 +153,8 @@ class UsuarioModel extends AbstractModel {
             'pwd'       => $user->getPwd(),
             'fk_perfil' => $user->getFkPerfil(),
             'adm'       => $user->getAdm(),
-            'status'    => $user->getStatus()
+            'status'    => $user->getStatus(),
+            'hash'      => $user->getHash()
         );
         $sql = new \Zend\Db\Sql\Sql($this->adapter);
         $update = $sql->update(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
@@ -176,6 +195,18 @@ class UsuarioModel extends AbstractModel {
         $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
         $select->columns(array('num' => new \Zend\Db\Sql\Expression('COUNT(*)')));
         $select->where('email like ' . "'$email'");
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute()->current();
+        return (int)$result['num'];
+    }
+    
+    public function countHash($hash)
+    {
+        $sql = new \Zend\Db\Sql\Sql($this->adapter);
+        $select = $sql->select(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
+        $select->columns(array('num' => new \Zend\Db\Sql\Expression('COUNT(*)')));
+        $select->where('hash like ' . "'$hash'");
+        $select->where->equalTo('status', 1);
         $statement = $sql->prepareStatementForSqlObject($select);
         $result = $statement->execute()->current();
         return (int)$result['num'];
@@ -264,7 +295,8 @@ EOT;
             'pwd'       => $user->getPwd(),
             'fk_perfil' => $user->getFkPerfil(),
             'adm'       => $user->getAdm(),
-            'status'    => $user->getStatus()
+            'status'    => $user->getStatus(),
+            'hash'      => $user->getHash()
         );
         $insert->values($newData);
         $statement = $sql->prepareStatementForSqlObject($insert);
@@ -314,7 +346,7 @@ EOT;
         return $entity;
     }
     
-    public function updatePwd($email, $newPwd)
+    public function updatePwd($hash, $newPwd)
     {
         $data = array(
             'pwd' => $newPwd
@@ -322,7 +354,7 @@ EOT;
         $sql = new \Zend\Db\Sql\Sql($this->adapter);
         $update = $sql->update(new \Zend\Db\Sql\TableIdentifier($this->table, $this->getSchema()));
         $update->set($data);
-        $update->where("email LIKE '". $email . "'");
+        $update->where("hash LIKE '". $hash . "'");
         $statement = $sql->prepareStatementForSqlObject($update);
         $resultSet = $statement->execute();
     }

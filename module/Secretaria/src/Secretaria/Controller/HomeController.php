@@ -66,6 +66,7 @@ class HomeController extends AbstractController {
                             $newUser->setPwd($cryptoPwd);
                             $newUser->setFkPerfil(1); //fk do perfil de aluno
                             $newUser->setStatus(0); //só será ativo após confirmação via email
+                            $newUser->setHash(bin2hex(openssl_random_pseudo_bytes(16)));
                             //validação da data
                             if (!empty($data['telefone']) && strpos($data['telefone'], '_') === false) {
                                 $newUser->setTelefone($data['telefone']);
@@ -75,7 +76,7 @@ class HomeController extends AbstractController {
 
                             if ($idMatriculado) {
                                 $bodyPart = new \Zend\Mime\Message();
-                                $bodyMessage = new \Zend\Mime\Part('Olá ' . $newUser->getNome() . ', seja bem vindo a Secretaria Online UFPR, por favor, <a href="http://localhost/secretariaonline/public/ativar-cadastro/' . $newUser->getCpf() . '">clique aqui</a> para ativar seu cadastro.');
+                                $bodyMessage = new \Zend\Mime\Part('Olá ' . $newUser->getNome() . ', seja bem vindo a Secretaria Online UFPR, por favor, <a href="http://localhost/secretariaonline/public/ativar-cadastro/' . $newUser->getHash() . '">clique aqui</a> para ativar seu cadastro.');
                                 $bodyMessage->type = 'text/html';
                                 $bodyPart->setParts(array($bodyMessage));
                                 $message = new \Zend\Mail\Message();
@@ -121,9 +122,9 @@ class HomeController extends AbstractController {
     }
 
     public function ativarCadastroAction() {
-        $cpf = $this->params()->fromRoute('cpf');
+        $hash = $this->params()->fromRoute('hash');
         $usuarioModel = new UsuarioModel($this->getDbAdapter());
-        $usuarioModel->activateUser($cpf);
+        $usuarioModel->activateUser($hash);
         $this->layout()->setTemplate('layout/layout-no-session');
         return new ViewModel();
     }
@@ -153,6 +154,7 @@ class HomeController extends AbstractController {
             $updateUser->setStatus(1);
             $updateUser->setAdm($user->getAdm());
             $updateUser->setFkPerfil($user->getFkPerfil());
+            $updateUser->setHash($user->getHash());
             if (!empty($data['password'])) {
                 $crypto = new CryptoController();
                 $cryptoPwd = $crypto->criarAction($data['password']);
@@ -190,10 +192,47 @@ class HomeController extends AbstractController {
     }
 
     public function resetSenhaAction() {
-        //preenchendo select de cursos
-        $cursoModel = new CursoModel($this->getDbAdapter());
-        $listaCursos = $cursoModel->findCursos();
-        //formulario novo aluno
+        //requisição via post
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $usuarioModel = new UsuarioModel($this->getDbAdapter());
+            $user = $usuarioModel->findByEmail($data['email']);
+            if ($user == false) {
+                $this->flashMessenger()->addErrorMessage('Este email não foi localizado em nosso sistema. Favor verificar.');
+            } else {
+                $bodyPart = new \Zend\Mime\Message();
+                $bodyMessage = new \Zend\Mime\Part('Olá ' . $user->getNome() . ', recebemos uma solicitação de reset de senha para a conta vinculada a este email, para dar prosseguimento ao pedido, <a href="http://localhost/secretariaonline/public/confirma-reset/' . $user->getHash() . '">clique aqui</a>.');
+                $bodyMessage->type = 'text/html';
+                $bodyPart->setParts(array($bodyMessage));
+                $message = new \Zend\Mail\Message();
+                $message->addTo($data['email'], $user->getNome())
+                        ->addFrom('secretaria.online.ufpr@gmail.com', 'Secretaria Online')
+                        ->setSubject('Solicitação - Reset de Senha')
+                        ->setBody($bodyPart)
+                        ->setEncoding('UTF-8');
+
+                $smtpOptions = new \Zend\Mail\Transport\SmtpOptions(array(
+                    "name" => "gmail",
+                    "host" => "smtp.gmail.com",
+                    "port" => 587,
+                    "connection_class" => "plain",
+                    "connection_config" => array("username" => "secretaria.online.ufpr@gmail.com",
+                        "password" => "ufpr2016", "ssl" => "tls")
+                ));
+
+                $transport = new \Zend\Mail\Transport\Smtp($smtpOptions);
+                $transport->send($message);
+                $this->flashMessenger()->addSuccessMessage($user->getNome() . " você receberá um email com informações para efetuar o reset de senha.");
+                $this->redirect()->refresh();
+            }
+        }
+        $this->layout()->setTemplate('layout/layout-no-session');
+        return new ViewModel();
+    }
+
+    public function confirmaResetAction() {
+        $hash = $this->params()->fromRoute('hash');
         $alunoForm = new \Secretaria\Form\ResetSenhaForm();
         $alunoForm->setInputFilter(new \Secretaria\Form\Filter\ResetSenhaFilter());
 
@@ -206,20 +245,22 @@ class HomeController extends AbstractController {
             if ($alunoForm->isValid()) {
                 //verifica se já não possui cadastro
                 $usuarioModel = new UsuarioModel($this->getDbAdapter());
-                $validacoes = $usuarioModel->countEmail($data['email']);
+                $validacoes = $usuarioModel->countHash($data['hash']);
+
                 if ($validacoes > 0) {
+                    $user = $usuarioModel->findByHash($data['hash']);
                     $crypto = new CryptoController();
                     $cryptoPwd = $crypto->criarAction($data['password']);
-                    $usuarioModel->updatePwd($data['email'], $cryptoPwd);
+                    $usuarioModel->updatePwd($data['hash'], $cryptoPwd);
 
                     $bodyPart = new \Zend\Mime\Message();
-                    $bodyMessage = new \Zend\Mime\Part('Olá, recebemos uma solicitação de troca de senha para a conta vinculada a este email ('. $data['email'] . '). A nova senha escolhida é <b>' . $data['password'] . '</b>. Em caso de dúvidas, por favor contate a secretaria do seu curso.');
+                    $bodyMessage = new \Zend\Mime\Part('Olá ' . $user->getNome() . ', sua solicitação de troca de senha foi realizada com sucesso. A nova senha escolhida é <b>' . $data['password'] . '</b>. Em caso de dúvidas, por favor contate a secretaria do seu curso.');
                     $bodyMessage->type = 'text/html';
                     $bodyPart->setParts(array($bodyMessage));
                     $message = new \Zend\Mail\Message();
-                    $message->addTo($data['email'], $data['email'])
+                    $message->addTo($user->getEmail(), $user->getNome())
                             ->addFrom('secretaria.online.ufpr@gmail.com', 'Secretaria Online')
-                            ->setSubject('Reset de Senha')
+                            ->setSubject('Confirmação - Reset de Senha')
                             ->setBody($bodyPart)
                             ->setEncoding('UTF-8');
 
@@ -234,10 +275,10 @@ class HomeController extends AbstractController {
 
                     $transport = new \Zend\Mail\Transport\Smtp($smtpOptions);
                     $transport->send($message);
-                    $this->flashMessenger()->addSuccessMessage("Troca de senha realizada com sucesso.");
+                    $this->flashMessenger()->addSuccessMessage("Reset de senha realizado com sucesso.");
                     $this->redirect()->refresh();
                 } else {
-                    $this->flashMessenger()->addErrorMessage('O email informado não consta em nosso sistema. Favor verificar.');
+                    $this->flashMessenger()->addErrorMessage('Ocorreu um erro interno. Favor informar a secretaria do seu curso.');
                 }
             } else {
                 $this->flashMessenger()->addErrorMessage($alunoForm->getMessages());
@@ -246,7 +287,8 @@ class HomeController extends AbstractController {
         }
         $this->layout()->setTemplate('layout/layout-no-session');
         return new ViewModel(array(
-            'form' => $alunoForm
+            'form' => $alunoForm,
+            'hash' => $hash
         ));
     }
 

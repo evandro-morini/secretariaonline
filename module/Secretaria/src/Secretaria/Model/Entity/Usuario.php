@@ -14,6 +14,7 @@ class Usuario extends AbstractEntity
     protected $fkPerfil;
     protected $adm;
     protected $status;
+    protected $hash;
 
     function getId() {
         return $this->id;
@@ -93,6 +94,14 @@ class Usuario extends AbstractEntity
 
     function setTelefone($telefone) {
         $this->telefone = $telefone;
+    }
+    
+    function getHash() {
+        return $this->hash;
+    }
+
+    function setHash($hash) {
+        $this->hash = $hash;
     }
 
 }

@@ -13,34 +13,6 @@ class ResetSenhaFilter extends InputFilter {
         $stringTooShort = \Zend\Validator\StringLength::TOO_SHORT;
         $stringTooLong = \Zend\Validator\StringLength::TOO_LONG;
         $token = \Zend\Validator\Identical::NOT_SAME;
-        
-        $this->add(array(
-            'name' => 'email',
-            'required' => true,
-            'filters' => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
-                    'name' => 'NotEmpty',
-                    'options' => array(
-                        'messages' => array(
-                            $isEmpty => 'O campo email não pode ser vazio.'
-                        )
-                    ),
-                    'break_chain_on_failure' => true
-                ),
-                array(
-                    'name' => 'EmailAddress',
-                    'options' => array(
-                        'messages' => array(
-                            $invalidEmail => 'Insira um endereço válido de email.'
-                        ),
-                    ),
-                ),
-            ),
-        ));
 
         $this->add(array(
             'name' => 'password',

@@ -9,18 +9,6 @@ class ResetSenhaForm extends Form {
     public function __construct($name = null) {
         parent::__construct('reset-senha');
 
-       $this->add(array(
-            'name' => 'email',
-            'type' => 'text',
-            'options' => array(
-                'label' => 'Email',
-            ),
-            'attributes' => array(
-                'class' => 'form-control',
-                'placeholder' => 'usuario@dominio.com',
-                'required' => true
-            ),
-        ));
         $this->add(array(
             'name' => 'password',
             'type' => 'password',

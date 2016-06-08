@@ -15,7 +15,8 @@ class Module {
         'autenticacao',
         'home/novo-usuario',
         'home/ativar-cadastro',
-        'home/reset-senha'
+        'home/reset-senha',
+        'home/confirma-reset'
     );
 
     public function onBootstrap(MvcEvent $e) {

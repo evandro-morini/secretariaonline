@@ -67,6 +67,7 @@ class AdmController extends AbstractController {
             $newUser->setTelefone($data['telefone']);
             $newUser->setEmail($data['email']);
             $newUser->setStatus(1);
+            $newUser->setHash(bin2hex(openssl_random_pseudo_bytes(16)));
             if (!is_null($data['adm'])) {
                 $newUser->setAdm(1);
             } else {
@@ -208,6 +209,7 @@ class AdmController extends AbstractController {
             $updateUser->setTelefone($data['telefone']);
             $updateUser->setEmail($data['email']);
             $updateUser->setStatus(1);
+            $updateUser->setHash($user->getHash());
             
             if (!empty($data['password'])) {
                 $crypto = new CryptoController();
