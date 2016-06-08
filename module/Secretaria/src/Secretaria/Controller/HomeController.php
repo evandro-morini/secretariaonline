@@ -133,6 +133,7 @@ class HomeController extends AbstractController {
         $auth = new AuthenticationService();
         $usuarioSessao = $auth->getIdentity();
         $id = $usuarioSessao->pkUsuario;
+        $perfil = $usuarioSessao->perfil;
         $usuarioModel = new UsuarioModel($this->getDbAdapter());
         $perfilModel = new PerfilModel($this->getDbAdapter());
         $cursoModel = new CursoModel($this->getDbAdapter());
@@ -174,6 +175,7 @@ class HomeController extends AbstractController {
 
         return new ViewModel(array(
             'id' => $id,
+            'perfil' => $perfil,
             'usuario' => $user,
             'matricula' => $matricula['matricula'],
             'idCurso' => $matricula['fk_curso'],

@@ -72,7 +72,11 @@
                         <input class="btn btn-success" type="submit" value="Salvar Alterações">
                     </div>
                 </div>
-                <p class="text-center"><a href="<?php echo $this->url('adm');?>">Voltar</a></p>
+                <?php if((int)$this->perfil == 1) : ?>
+                    <p class="text-center"><a href="<?php echo $this->url('solicitacao/minhas-solicitacoes');?>">Voltar</a></p>
+                <?php else : ?>
+                    <p class="text-center"><a href="<?php echo $this->url('tarefas');?>">Voltar</a></p>
+                <?php endif; ?>
             </form>
         </div>
     </section>
