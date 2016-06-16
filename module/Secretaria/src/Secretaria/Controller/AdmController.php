@@ -203,38 +203,44 @@ class AdmController extends AbstractController {
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            $updateUser = new Usuario();
-            $updateUser->setCpf($data['cpf']);
-            $updateUser->setNome($data['nome']);
-            $updateUser->setTelefone($data['telefone']);
-            $updateUser->setEmail($data['email']);
-            $updateUser->setStatus(1);
-            $updateUser->setHash($user->getHash());
+            $validEmail = $usuarioModel->findEqualEmails($data['id'], $data['email']);
             
-            if (!empty($data['password'])) {
-                $crypto = new CryptoController();
-                $cryptoPwd = $crypto->criarAction($data['password']);
-                $updateUser->setPwd($cryptoPwd);
-            } else {
-                $updateUser->setPwd($user->getPwd());
-            }
+            if($validEmail == 0) {
+                $updateUser = new Usuario();
+                $updateUser->setCpf($data['cpf']);
+                $updateUser->setNome($data['nome']);
+                $updateUser->setTelefone($data['telefone']);
+                $updateUser->setEmail($data['email']);
+                $updateUser->setStatus(1);
+                $updateUser->setHash($user->getHash());
 
-            if ($user->getFkPerfil() == 1) {
-                $updateUser->setFkPerfil($user->getFkPerfil());
-                $usuarioModel->updateEnrollment($id, $data['curso'], $data['matricula']);
-            } else {
-                $updateUser->setFkPerfil($data['perfil']);
-                if (!is_null($data['adm'])) {
-                    $updateUser->setAdm(1);
+                if (!empty($data['password'])) {
+                    $crypto = new CryptoController();
+                    $cryptoPwd = $crypto->criarAction($data['password']);
+                    $updateUser->setPwd($cryptoPwd);
                 } else {
-                    $updateUser->setAdm(0);
+                    $updateUser->setPwd($user->getPwd());
                 }
-                
+
+                if ($user->getFkPerfil() == 1) {
+                    $updateUser->setFkPerfil($user->getFkPerfil());
+                    $usuarioModel->updateEnrollment($id, $data['curso'], $data['matricula']);
+                } else {
+                    $updateUser->setFkPerfil($data['perfil']);
+                    if (!is_null($data['adm'])) {
+                        $updateUser->setAdm(1);
+                    } else {
+                        $updateUser->setAdm(0);
+                    }
+
+                }
+
+                $usuarioModel->updateUser($id, $updateUser);
+                $this->flashMessenger()->addSuccessMessage("Usuário atualizado com sucesso!");
+                $this->redirect()->refresh();
+            } else {
+                $this->flashMessenger()->addErrorMessage('Este email já está em uso. Por favor tente novamente.');
             }
-            
-            $usuarioModel->updateUser($id, $updateUser);
-            $this->flashMessenger()->addSuccessMessage("Usuário atualizado com sucesso!");
-            $this->redirect()->refresh();
         }
 
         return new ViewModel(array(

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 08-Jun-2016 às 02:50
+-- Generation Time: 17-Jun-2016 às 01:12
 -- Versão do servidor: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -295,6 +295,7 @@ CREATE TABLE IF NOT EXISTS `tb_usuario` (
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `hash` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `tb_usuario_fk_perfil_idx` (`fk_perfil`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
 

@@ -358,5 +358,19 @@ EOT;
         $statement = $sql->prepareStatementForSqlObject($update);
         $resultSet = $statement->execute();
     }
+    
+    public function findEqualEmails($idUsuario, $emailUsuario) {
+        $sql = <<<EOT
+            SELECT
+                COUNT(*)
+            FROM
+                tb_usuario AS usu
+            WHERE
+                usu.email = '$emailUsuario'
+            AND usu.id <> $idUsuario
+EOT;
+        $statement = $this->adapter->query($sql);
+        return $statement->execute()->current()['COUNT(*)'];
+    }
 
 }

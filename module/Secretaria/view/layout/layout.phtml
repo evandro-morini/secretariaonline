@@ -17,7 +17,11 @@
     </head>
     <body class="skin-black">
         <header class="header">
-            <a href="<?php echo $this->url('home');?>" class="logo">Secretaria Online</a>
+            <?php if($this->perfil == 1) : ?>
+                <a href="<?php echo $this->url('solicitacao/minhas-solicitacoes');?>" class="logo">Secretaria Online</a>
+            <?php else : ?>
+                <a href="<?php echo $this->url('tarefas');?>" class="logo">Secretaria Online</a>
+            <?php endif; ?>
             <nav class="navbar navbar-static-top" role="navigation">
                 <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
                     <span class="sr-only">Toggle navigation</span>
