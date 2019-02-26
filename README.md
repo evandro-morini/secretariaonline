@@ -1,3 +1,3 @@
 # secretariaonline
 
-Trabalho de conclusão de curso por Evandro Morini, Otávio Almeida e Otávio Ledur.
+Trabalho de conclusão de curso por Evandro Morini, feito em PHP utilizando Zend Framework 1
