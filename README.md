@@ -1,3 +1,2 @@
-# secretariaonline
-
-Trabalho de conclusão de curso por Evandro Morini, feito em PHP utilizando Zend Framework 2
+A workflow system example for use in an University enviroment, made with Zend 2 + MySQL
+Contact: evandro.morini@gmail.com
